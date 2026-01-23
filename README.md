@@ -29,7 +29,7 @@ A Claude Code plugin for testing documentation procedures and validating that do
 ### Option 2: Install with `npx add-skill`
 
 > [!WARNING]
-> `npx add-skill` only installs skills, not commands or other agent tools. For full functionality, consider [manual installation](#manual-installation).
+> `npx add-skill` only installs skills, not commands or other agent tools. For full functionality, consider [manual installation](#option-3-manual-installation).
 
 Install these skills with the [`add-skill`](https://github.com/vercel-labs/add-skill) package from Vercel. This works with Claude Code, Cursor, Codex, OpenCode, and other AI coding tools.
 
@@ -39,7 +39,7 @@ npx add-skill doc-detective/agent-tools
 
 The CLI auto-detects which AI tools you have installed and places the skills in the appropriate directories.
 
-### Option 3: Manual Installation {#manual-installation}
+### Option 3: Manual Installation
 
 #### Clone to your skills directory
 
