@@ -1,0 +1,36 @@
+{
+  "name": "doc-detective",
+  "owner": {
+    "name": "Doc Detective Agency",
+    "email": "manny@doc-detective.com"
+  },
+  "metadata": {
+    "description": "Documentation testing and workflow validation tools.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "doc-testing",
+      "source": {
+        "source": "github",
+        "repo": "doc-detective/agent-tools"
+      },
+      "description": "Full-featured skill for testing documentation procedures using Doc Detective framework. Convert documentation into executable test specifications and validate that documented workflows match actual application behavior.",
+      "version": "1.0.0-beta.0",
+      "author": {
+        "name": "Doc Detective Agency"
+      },
+      "homepage": "https://doc-detective.com",
+      "repository": "https://github.com/doc-detective/agent-tools",
+      "license": "MIT",
+      "keywords": [
+        "documentation",
+        "testing",
+        "workflow",
+        "validation",
+        "procedures"
+      ],
+      "category": "testing"
+    }
+  ]
+}
