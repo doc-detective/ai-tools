@@ -12,7 +12,7 @@ A Claude Code plugin for testing documentation procedures and validating that do
 
 ## Installation
 
-### Option 1: Claude Code Plugin (Coming Soon)
+### Option 1: Claude Code Plugin
 
 1. Add the Doc Detective plugin to Claude Code's plugin marketplace:
 
