@@ -15,7 +15,7 @@
         "source": "url",
         "url": "https://github.com/doc-detective/agent-tools.git"
       },
-      "description": "Full-featured skill for testing documentation procedures using Doc Detective framework. Convert documentation into executable test specifications and validate that documented workflows match actual application behavior.",
+      "description": "Test documentation procedures using Doc Detective framework. Convert documentation into executable test specifications and validate that documented workflows match actual application behavior.",
       "version": "1.0.0-beta.0",
       "author": {
         "name": "Doc Detective Agency"
