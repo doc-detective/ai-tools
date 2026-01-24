@@ -10,7 +10,7 @@
   },
   "plugins": [
     {
-      "name": "doc-testing",
+      "name": "doc-detective",
       "source": {
         "source": "github",
         "repo": "doc-detective/agent-tools"
