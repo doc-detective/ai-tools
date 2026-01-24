@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {
+      "testId": "getting-started",
+      "description": "Verify the getting started documentation",
+      "steps": [
+        {
+          "goTo": "https://example.com"
+        },
+        {
+          "find": "Welcome"
+        },
+        {
+          "click": "Get Started"
+        }
+      ]
+    }
+  ]
+}

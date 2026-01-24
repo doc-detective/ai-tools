@@ -185,7 +185,14 @@ function getMarkupPatterns(fileType, config) {
   
   // Merge with config patterns if present
   if (config?.fileTypes) {
-    const fileTypeConfig = config.fileTypes.find(ft => ft.name === fileType);
+    // Handle fileTypes as either array or object
+    let fileTypeConfig;
+    if (Array.isArray(config.fileTypes)) {
+      fileTypeConfig = config.fileTypes.find(ft => ft.name === fileType);
+    } else if (typeof config.fileTypes === 'object') {
+      fileTypeConfig = config.fileTypes[fileType];
+    }
+    
     if (fileTypeConfig?.markup) {
       // Convert config regex strings to RegExp objects
       const configPatterns = fileTypeConfig.markup.map(p => ({
@@ -193,6 +200,17 @@ function getMarkupPatterns(fileType, config) {
         regex: p.regex.map(r => new RegExp(r, 'g')),
       }));
       patterns = [...patterns, ...configPatterns];
+    }
+    
+    // Also check customPatterns at root level
+    if (config.customPatterns?.[fileType]) {
+      const customPatterns = config.customPatterns[fileType].map(p => ({
+        ...p,
+        regex: new RegExp(p.regex, 'g'),
+        actions: [p.action],
+        captureGroups: p.valueGroup ? { value: p.valueGroup } : { value: 1 },
+      }));
+      patterns = [...patterns, ...customPatterns];
     }
   }
   

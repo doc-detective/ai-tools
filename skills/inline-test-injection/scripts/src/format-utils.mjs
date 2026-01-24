@@ -232,12 +232,8 @@ export function serializeStepToInline({ step, commentFormat, fileExtension, synt
   
   let stepContent;
   if (canSerializeAsSimple(stepToSerialize, actionKey)) {
-    const actionValue = stepToSerialize[actionKey];
-    if (typeof actionValue === 'string') {
-      stepContent = `${actionKey}: "${actionValue}"`;
-    } else {
-      stepContent = `${actionKey}: ${actionValue}`;
-    }
+    const simpleStep = { [actionKey]: stepToSerialize[actionKey] };
+    stepContent = serializeToSyntax(simpleStep, syntax);
   } else {
     stepContent = serializeToSyntax(stepToSerialize, syntax);
   }

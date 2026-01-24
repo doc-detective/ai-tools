@@ -1,0 +1,34 @@
+= Getting Started Guide
+:toc:
+:icons: font
+
+== Introduction
+
+Welcome to our platform! This guide covers the essential first steps.
+
+== Accessing the Application
+
+Navigate to https://example.com[Example Application] to begin.
+
+TIP: Bookmark this URL for quick access later.
+
+== First Steps
+
+When you arrive, verify that *Welcome* is displayed on screen.
+
+=== Starting the Setup
+
+Click *Get Started* to proceed with configuration.
+
+[source,bash]
+----
+curl https://api.example.com/status
+----
+
+== Resources
+
+* See the https://docs.example.com[documentation] for more details
+* Check the https://api.example.com[API reference]
+
+.Homepage Screenshot
+image::images/homepage.png[Homepage]

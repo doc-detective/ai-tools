@@ -1,0 +1,24 @@
+{
+  "customPatterns": {
+    "markdown": [
+      {
+        "name": "customNavigate",
+        "regex": "(?:Head over to|Jump to)\\s+\\[([^\\]]+)\\]\\(([^)]+)\\)",
+        "action": "goTo",
+        "valueGroup": 2
+      },
+      {
+        "name": "customClick",
+        "regex": "(?:Press|Tap on|Hit)\\s+\\*\\*([^*]+)\\*\\*",
+        "action": "click",
+        "valueGroup": 1
+      }
+    ]
+  },
+  "fileTypes": {
+    "markdown": {
+      "extensions": [".md", ".markdown"],
+      "commentFormat": "html"
+    }
+  }
+}

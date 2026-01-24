@@ -1,0 +1,11 @@
+{
+  "notTests": [
+    {
+      "testId": "bad-spec",
+      "steps": []
+    }
+  ],
+  "metadata": {
+    "description": "This spec is invalid because it lacks the required 'tests' array"
+  }
+}

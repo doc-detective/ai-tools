@@ -1,0 +1,23 @@
+tests:
+  - testId: login-flow
+    description: Verify login procedure from documentation
+    steps:
+      - goTo: https://app.example.com/login
+      - find: Sign In
+      - type:
+          selector: "#email"
+          keys: user@example.com
+      - type:
+          selector: "#password"
+          keys: secret123
+      - click: Sign In
+      - find: Dashboard
+      - screenshot: login-success.png
+
+  - testId: navigation-test
+    description: Test main navigation links
+    steps:
+      - goTo: https://app.example.com
+      - checkLink: https://docs.example.com
+      - click: Documentation
+      - find: API Reference
