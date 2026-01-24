@@ -1,0 +1,33 @@
+{
+  "tests": [
+    {
+      "testId": "duckduckgo-search",
+      "description": "Verify search procedure from documentation",
+      "steps": [
+        {
+          "stepId": "nav-duckduckgo",
+          "description": "Navigate to DuckDuckGo",
+          "goTo": "https://duckduckgo.com"
+        },
+        {
+          "stepId": "type-search",
+          "description": "Type 'hello world' in the search box",
+          "type": {
+            "keys": "hello world",
+            "selector": "[name='q']"
+          }
+        },
+        {
+          "stepId": "click-search",
+          "description": "Click the Search button",
+          "click": "Search"
+        },
+        {
+          "stepId": "verify-results",
+          "description": "Verify you see search results",
+          "find": "results"
+        }
+      ]
+    }
+  ]
+}

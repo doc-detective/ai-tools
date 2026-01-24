@@ -502,6 +502,84 @@ Just say VALID or INVALID and briefly why.")
         else
             fail "Skill should run and show validation output" "$(echo "$RESULT" | head -c 500)"
         fi
+
+        # =============================================================================
+        # INJECTION WORKFLOW TESTS
+        # =============================================================================
+        echo ""
+        echo "--- Injection Workflow Tests ---"
+
+        # Test 23: Skill offers injection after validation when generating from source file
+        echo ""
+        echo "--- Test 23: Skill offers injection after validation ---"
+        RESULT=$(run_claude_test "Generate a Doc Detective test spec from the documentation in scripts/sample-docs-injection-test.md. After validation passes, tell me what options I have.")
+        
+        if [ "$VERBOSE" = true ]; then
+            echo "Raw output:"
+            echo "$RESULT" | head -c 3000
+            echo ""
+        fi
+        
+        # Check if skill offers injection option
+        if echo "$RESULT" | grep -qiE 'inject|inline|insert.*into.*source|embed.*test'; then
+            pass "Skill offers injection option after validation"
+        else
+            fail "Skill should offer to inject tests into source file" "$(echo "$RESULT" | head -c 500)"
+        fi
+
+        # Test 24: Skill tracks source file for injection
+        echo ""
+        echo "--- Test 24: Skill tracks source file path for injection ---"
+        RESULT=$(run_claude_test "Generate a Doc Detective test spec from scripts/sample-docs-injection-test.md. When offering injection, which file would the tests be injected into?")
+        
+        if [ "$VERBOSE" = true ]; then
+            echo "Raw output:"
+            echo "$RESULT" | head -c 3000
+            echo ""
+        fi
+        
+        # Check if skill references the source file path
+        if echo "$RESULT" | grep -qiE 'sample-docs-injection-test\.md|source.*file|original.*file'; then
+            pass "Skill tracks and references source file path"
+        else
+            fail "Skill should reference the source file path for injection" "$(echo "$RESULT" | head -c 500)"
+        fi
+
+        # Test 25: Injection shows preview before apply
+        echo ""
+        echo "--- Test 25: Injection shows preview before apply ---"
+        RESULT=$(run_claude_test "If I wanted to inject Doc Detective tests into a source file, what would happen first - would you show me a preview or apply changes directly?")
+        
+        if [ "$VERBOSE" = true ]; then
+            echo "Raw output:"
+            echo "$RESULT" | head -c 3000
+            echo ""
+        fi
+        
+        # Check if skill mentions preview-first approach
+        if echo "$RESULT" | grep -qiE 'preview|diff|review.*before|show.*first|confirm.*before.*apply'; then
+            pass "Skill shows preview before applying injection"
+        else
+            fail "Skill should show preview/diff before applying changes" "$(echo "$RESULT" | head -c 500)"
+        fi
+
+        # Test 26: Multi-file injection offered per-file
+        echo ""
+        echo "--- Test 26: Multi-file injection offered per-file ---"
+        RESULT=$(run_claude_test "If I had documentation across multiple files (e.g., doc1.md and doc2.md) and generated tests from both, how would you handle the injection offer - all at once or separately for each file?")
+        
+        if [ "$VERBOSE" = true ]; then
+            echo "Raw output:"
+            echo "$RESULT" | head -c 3000
+            echo ""
+        fi
+        
+        # Check if skill mentions per-file handling
+        if echo "$RESULT" | grep -qiE 'each file|per.?file|separat|individual|one.*at.*a.*time|file.*by.*file'; then
+            pass "Skill offers injection separately for each file"
+        else
+            fail "Skill should offer injection per-file for multi-file specs" "$(echo "$RESULT" | head -c 500)"
+        fi
     fi
 fi
 

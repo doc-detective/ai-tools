@@ -40,10 +40,10 @@ Test documentation procedures by converting them to Doc Detective test specifica
 ## Workflow
 
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────┐     ┌─────────────┐
-│ 1. Interpret    │────▶│ 2. VALIDATE      │────▶│ 3. Execute  │────▶│ 4. Analyze  │
-│ (docs → spec)   │     │ (MANDATORY GATE) │     │ (run tests) │     │ (results)   │
-└─────────────────┘     └──────────────────┘     └─────────────┘     └─────────────┘
+┌─────────────────┐     ┌──────────────────┐     ┌──────────────────┐     ┌─────────────┐     ┌─────────────┐
+│ 1. Interpret    │────▶│ 2. VALIDATE      │────▶│ 2b. Inject?      │────▶│ 3. Execute  │────▶│ 4. Analyze  │
+│ (docs → spec)   │     │ (MANDATORY GATE) │     │ (optional offer) │     │ (run tests) │     │ (results)   │
+└─────────────────┘     └──────────────────┘     └──────────────────┘     └─────────────┘     └─────────────┘
 ```
 
 **Efficiency tip:** For full workflows, chain commands. Example:
@@ -203,6 +203,96 @@ If validation fails:
 3. Re-run validation
 4. Repeat until validation passes
 5. Only then proceed to return spec or execute
+
+## Step 2b: Offer Inline Test Injection (After Validation Passes)
+
+When you generate a test spec **from a source documentation file**, offer to inject the tests directly into that file using inline test markup.
+
+### When to Offer Injection
+
+Offer injection when ALL of these conditions are met:
+- Validation passed (Step 2 complete)
+- The test spec was generated from a specific source file (not from a URL, user description, or other non-file source)
+- The source file path is known and accessible
+
+**Do NOT offer injection when:**
+- Validation failed
+- Spec was generated from a URL or user-provided description (no source file)
+- Source file cannot be modified (e.g., read-only, external repository)
+
+### Track Source File Path
+
+Throughout the workflow, remember which source file(s) each test was generated from:
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│ Source File     │────▶│ Test Spec       │────▶│ Injection       │
+│ docs/login.md   │     │ test: login-flow│     │ Target: login.md│
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+```
+
+### Injection Decision Prompt
+
+After validation passes, ask the user:
+
+> **Would you like to inject this test spec into your source file?**
+>
+> This will add inline test comments to `<source-file-path>` that Doc Detective can execute directly from your documentation.
+>
+> - **Yes** - Show preview of changes, then apply on confirmation
+> - **No** - Return the JSON spec only
+
+### Injection Workflow (Preview-Then-Apply)
+
+If user accepts injection:
+
+1. **Write spec to temp file** for the injection tool:
+   ```bash
+   # Create temp spec file
+   echo '<validated-spec-json>' > /tmp/doc-detective-spec-$(date +%s).json
+   ```
+
+2. **Show preview first** (default mode - no `--apply` flag):
+   ```bash
+   ./skills/inline-test-injection/scripts/dist/inject-inline /tmp/doc-detective-spec-<timestamp>.json <source-file-path>
+   ```
+   This displays a diff of planned changes without modifying the file.
+
+3. **Ask for confirmation** after user reviews preview:
+   > **Apply these changes to `<source-file-path>`?**
+   > - **Yes** - Apply the injection
+   > - **No** - Cancel (spec JSON still available)
+
+4. **Apply changes** on confirmation:
+   ```bash
+   ./skills/inline-test-injection/scripts/dist/inject-inline /tmp/doc-detective-spec-<timestamp>.json <source-file-path> --apply
+   ```
+
+5. **Clean up** temp file after successful apply. Retain on error for debugging.
+
+### Multi-File Handling
+
+When a test spec spans multiple source files, offer injection **separately for each file**:
+
+```
+Source files: docs/login.md, docs/checkout.md
+Generated spec: 2 tests (login-flow from login.md, checkout-flow from checkout.md)
+
+Injection offers:
+1. "Inject login-flow tests into docs/login.md?" → Yes/No
+2. "Inject checkout-flow tests into docs/checkout.md?" → Yes/No
+```
+
+**User can accept/decline per-file.** Return the full JSON spec regardless of injection decisions.
+
+### Injection Tool Location
+
+The injection tool is part of the `inline-test-injection` skill:
+```
+skills/inline-test-injection/scripts/dist/inject-inline
+```
+
+If the tool is not available, inform the user and return the JSON spec without injection.
 
 ## Step 3: Execute Tests
 
