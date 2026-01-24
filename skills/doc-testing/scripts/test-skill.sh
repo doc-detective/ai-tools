@@ -443,7 +443,7 @@ Just say VALID or INVALID and briefly why.")
         # Test 16: Generated spec passes validator
         echo ""
         echo "--- Test 16: Generated spec passes validator ---"
-        SPEC=$(run_claude_test "Create a Doc Detective test spec JSON for: Navigate to https://example.com and verify 'Hello' text exists. Output ONLY the raw JSON, no markdown, no explanation.")
+        SPEC=$(run_claude_test "Generate a Doc Detective test spec for: Navigate to https://example.com and verify 'Hello' text exists. Validate it and return the JSON spec.")
         
         if [ "$VERBOSE" = true ]; then
             echo "Raw output:"
@@ -486,7 +486,7 @@ Just say VALID or INVALID and briefly why.")
         # Test 17: Skill demonstrates validation workflow
         echo ""
         echo "--- Test 17: Skill actually runs validation script ---"
-        RESULT=$(run_claude_test "Generate a Doc Detective test spec for navigating to https://example.com.")
+        RESULT=$(run_claude_test "Generate a Doc Detective test spec for navigating to https://example.com. Run the validation script and show me the validation results.")
         
         if [ "$VERBOSE" = true ]; then
             echo "Raw output:"

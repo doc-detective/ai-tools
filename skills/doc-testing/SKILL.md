@@ -7,19 +7,26 @@ description: 'Doc Detective test specs and JSON test specifications. MANDATORY: 
 
 Test documentation procedures by converting them to Doc Detective test specifications and executing them.
 
-## ⚠️ STOP: Read These Rules Before Generating Any JSON
+## ⚠️ CRITICAL: Read These Rules Before Generating Any JSON
 
-### Rule 1: Action Name = JSON Key
+### Rule 1: Action Name = JSON Key (NEVER use "action" property)
+
+**THE ACTION NAME IS THE KEY ITSELF. There is NO "action" property in Doc Detective.**
 
 ```json
-✅ { "goTo": "https://example.com" }
-✅ { "find": "Welcome" }  
-✅ { "click": "Submit" }
-✅ { "type": { "keys": "hello", "selector": "#input" } }
+✅ CORRECT - action name IS the key:
+{ "goTo": "https://example.com" }
+{ "find": "Welcome" }  
+{ "click": "Submit" }
+{ "type": { "keys": "hello", "selector": "#input" } }
 
-❌ { "action": "goTo", "url": "..." }     // WRONG - no "action" key!
-❌ { "action": "find", "text": "..." }    // WRONG - no "action" key!
+❌ WRONG - NEVER use an "action" property:
+{ "action": "goTo", "url": "..." }     // INVALID! Doc Detective will reject this!
+{ "action": "find", "text": "..." }    // INVALID! Doc Detective will reject this!
+{ "action": "click", "selector": "..." } // INVALID! Doc Detective will reject this!
 ```
+
+**If you write `"action":` anywhere in a step, you are doing it wrong. Delete it and use the action name as the key.**
 
 ### Rule 2: Prefer Text Over Selectors
 
@@ -31,11 +38,19 @@ Test documentation procedures by converting them to Doc Detective test specifica
 ❌ { "find": ".welcome-msg" }      // Selector - only if text won't work
 ```
 
-### Rule 3: ALWAYS Validate Before Returning
+### Rule 3: ALWAYS Run Validator Before Returning ANY Spec
+
+**You MUST execute this command and show the output before returning a spec to the user:**
 
 ```bash
-./scripts/dist/validate-test spec.json    # Must show "Validation PASSED"
+# Save spec to file first
+echo '<your-spec-json>' > /tmp/spec.json
+
+# Run validator - MUST show "Validation PASSED"
+./scripts/dist/validate-test /tmp/spec.json
 ```
+
+**Do NOT return a spec without running validation. If validation fails, fix the spec and re-validate.**
 
 ## Workflow
 
@@ -134,13 +149,25 @@ Use selectors only when:
 
 ## Step 2: Validate (MANDATORY - DO NOT SKIP)
 
-⚠️ **YOU MUST RUN THIS COMMAND before returning ANY test spec to the user:**
+### ⚠️ YOU MUST EXECUTE THIS BEFORE RESPONDING
 
-```bash
-./scripts/dist/validate-test test-spec.json
-```
+**Before returning ANY test spec to the user, you MUST:**
 
-**Do not return a test spec without running validation and showing the output.**
+1. Save the spec to a temp file:
+   ```bash
+   cat > /tmp/test-spec.json << 'EOF'
+   <your-generated-spec-here>
+   EOF
+   ```
+
+2. Run the validator and show output:
+   ```bash
+   ./scripts/dist/validate-test /tmp/test-spec.json
+   ```
+
+3. Only if output shows `Validation PASSED`, proceed to return the spec.
+
+**If you skip validation or don't show the output, you are violating this skill's requirements.**
 
 ### What Validation Checks
 
@@ -404,15 +431,17 @@ Doc Detective outputs `testResults-<timestamp>.json`:
 
 ## Checklist: Before Completing Any Task
 
-⚠️ **MANDATORY: Complete ALL steps before returning a test spec:**
+### ⚠️ MANDATORY PRE-RESPONSE CHECKLIST
 
-1. [ ] Action names are JSON keys (`"goTo": "url"` NOT `"action": "goTo"`)
-2. [ ] Text-based matching (`"click": "Submit"` not `"click": "#btn"`)
-3. [ ] Valid JSON with `tests` array containing `testId` and `steps`
-4. [ ] **RUN `./scripts/dist/validate-test <file>` and SHOW output**
-5. [ ] Validation shows "PASSED" - if not, fix and re-validate
+**You MUST verify ALL of these before returning a test spec:**
 
-**Never skip step 4. Always run validation and show the result.**
+1. [ ] **NO "action" property** - Check every step: if you see `"action":` anywhere, DELETE IT and rewrite. Use `"goTo":`, `"click":`, `"find":` etc. as the key itself.
+2. [ ] **Text-based matching** - Use `"click": "Submit"` not `"click": "#btn"`
+3. [ ] **Valid structure** - `tests` array with `testId` and `steps` in each test
+4. [ ] **EXECUTE VALIDATION** - Run `./scripts/dist/validate-test` on the spec file and include the output in your response
+5. [ ] **Validation PASSED** - Output must show "Validation PASSED". If not, fix and re-run.
+
+**STOP: Did you run the validator and show its output? If not, do it now before responding.**
 
 ## Actions Reference
 
