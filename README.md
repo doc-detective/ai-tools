@@ -29,7 +29,7 @@ Agent tools for testing documentation procedures and validating that documented 
 2. Then install specific skill sets via:
 
    ```text
-   /plugin install doc-testing@doc-detective-agent-tools
+   /plugin install doc-detective@doc-detective
    ```
 
 ### Option 2: Install with `npx add-skill`
