@@ -4,6 +4,17 @@
 
 set -euo pipefail
 
+# Check for Bash 4+ (required for associative arrays)
+if [ -z "${BASH_VERSINFO[0]}" ] || [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+    echo "Error: Bash 4+ required for associative arrays (declare -A). Please install newer bash." >&2
+    echo "Current version: $BASH_VERSION" >&2
+    echo "" >&2
+    echo "On macOS, you can install Bash 4+ with:" >&2
+    echo "  brew install bash" >&2
+    echo "  # Then run this script with the new bash: /usr/local/bin/bash $0" >&2
+    exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_DIR="$SCRIPT_DIR/src"
 DIST_DIR="$SCRIPT_DIR/dist"
@@ -21,21 +32,15 @@ WASMTIME_VERSION="v29.0.1"
 # Note: Wasmtime does not publish official checksums, so these are recorded
 # here for verification purposes.
 #
-# IMPORTANT: These checksums are placeholders and should be verified/updated
-# when first downloading the archives. To compute checksums:
-#   1. Download: curl -sL <url> -o archive.tar.xz
-#   2. Checksum: sha256sum archive.tar.xz (or shasum -a 256 on macOS)
-#   3. Update the corresponding entry below
-#
 # If you're using pre-existing binaries from the runtimes/ directory,
 # checksum verification will be skipped since we only verify archives.
 declare -A WASMTIME_CHECKSUMS=(
-    ["wasmtime-v29.0.1-x86_64-linux.tar.xz"]=""
-    ["wasmtime-v29.0.1-aarch64-linux.tar.xz"]=""
-    ["wasmtime-v29.0.1-x86_64-macos.tar.xz"]=""
-    ["wasmtime-v29.0.1-aarch64-macos.tar.xz"]=""
-    ["wasmtime-v29.0.1-x86_64-windows.zip"]=""
-    ["wasmtime-v29.0.1-aarch64-windows.zip"]=""
+    ["wasmtime-v29.0.1-x86_64-linux.tar.xz"]="579ec7086f34ff6bbc53483ae00f660be1570f3ef10af0880a4ba9867067a77c"
+    ["wasmtime-v29.0.1-aarch64-linux.tar.xz"]="5db4d27d008d726fe69adf8fcf59f42b0c2f0e51519970414860efda8b5e9655"
+    ["wasmtime-v29.0.1-x86_64-macos.tar.xz"]="7f62746a61c759932f4307cec32f139b31c9e5db93eab6c02238dcb82bd9a6d8"
+    ["wasmtime-v29.0.1-aarch64-macos.tar.xz"]="56fb3c04c230eabcce92717081c51d3dc87d3416c3b059a2783e5496a29cf384"
+    ["wasmtime-v29.0.1-x86_64-windows.zip"]="3d4c7b4145fb4426c4ece54302f598c33998f9d2cc8894059d7103b83d3dddff"
+    ["wasmtime-v29.0.1-aarch64-windows.zip"]="93b4a2bcbe9ad9c0505b246c6bd38550428be05876995230b607fde35bd772f1"
 )
 
 # Colors for output
@@ -116,8 +121,9 @@ verify_wasmtime_checksum() {
     
     local expected="${WASMTIME_CHECKSUMS[$archive_name]:-}"
     if [ -z "$expected" ]; then
-        log_warn "No checksum available for $archive_name"
-        return 0
+        log_error "No checksum available for $archive_name - cannot verify integrity"
+        log_error "This is a security requirement. Please add the checksum to WASMTIME_CHECKSUMS."
+        return 1
     fi
     
     local actual
@@ -126,8 +132,8 @@ verify_wasmtime_checksum() {
     elif command -v shasum &>/dev/null; then
         actual=$(shasum -a 256 "$archive_file" | awk '{print $1}')
     else
-        log_warn "sha256sum/shasum not available, skipping verification"
-        return 0
+        log_error "sha256sum/shasum not available - cannot verify integrity"
+        return 1
     fi
     
     if [ "$actual" = "$expected" ]; then

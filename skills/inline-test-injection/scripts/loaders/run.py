@@ -220,7 +220,10 @@ def main():
             for test_info in unmatched:
                 print(f"  Test: {test_info.get('testId', '(unnamed)')}")
                 for step in test_info.get("steps", []):
-                    print(f"    - Step {step['stepIndex'] + 1}: {step['action']} (suggested line {step['suggestedLine']})")
+                    step_index = step.get('stepIndex', 0)
+                    action = step.get('action', '(unknown)')
+                    suggested_line = step.get('suggestedLine', '?')
+                    print(f"    - Step {step_index + 1}: {action} (suggested line {suggested_line})")
         
         sys.exit(0)
     else:

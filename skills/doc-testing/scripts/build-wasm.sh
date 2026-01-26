@@ -96,23 +96,17 @@ if [ "$DOWNLOAD_RUNTIME" = true ]; then
     # These checksums were computed from official releases at:
     # https://github.com/bytecodealliance/wasmtime/releases/tag/v41.0.0
     # Note: Wasmtime does not publish official checksums, so these are recorded
-    # here for verification purposes. 
-    #
-    # IMPORTANT: These checksums are placeholders and should be verified/updated
-    # when first downloading the archives. To compute checksums:
-    #   1. Download: curl -sL <url> -o archive.tar.xz
-    #   2. Checksum: sha256sum archive.tar.xz (or shasum -a 256 on macOS)
-    #   3. Update the corresponding entry below
+    # here for verification purposes.
     #
     # If you're using pre-existing binaries from the runtimes/ directory,
     # checksum verification will be skipped since we only verify archives.
     declare -A CHECKSUMS=(
-        ["wasmtime-v41.0.0-x86_64-linux.tar.xz"]=""
-        ["wasmtime-v41.0.0-aarch64-linux.tar.xz"]=""
-        ["wasmtime-v41.0.0-x86_64-macos.tar.xz"]=""
-        ["wasmtime-v41.0.0-aarch64-macos.tar.xz"]=""
-        ["wasmtime-v41.0.0-x86_64-windows.zip"]=""
-        ["wasmtime-v41.0.0-aarch64-windows.zip"]=""
+        ["wasmtime-v41.0.0-x86_64-linux.tar.xz"]="07b82a195dc3bda0be010f73d48778b43a209829e9912a4bcd46a8e3760d74e9"
+        ["wasmtime-v41.0.0-aarch64-linux.tar.xz"]="99d9dd1e314f60eb96256615685bc28f8669b613efcf162881abdf5ad646d35a"
+        ["wasmtime-v41.0.0-x86_64-macos.tar.xz"]="ec91e9d4130fe1776bde8601c2dffde299dc59b4dbdad6f8f471bac04bd86094"
+        ["wasmtime-v41.0.0-aarch64-macos.tar.xz"]="3f8520e697e9d2105fc8e5c77f03185a75629065d0b84c90b8e57e09adb029f1"
+        ["wasmtime-v41.0.0-x86_64-windows.zip"]="78f4216dffdce4a8b2310bff6e019c1ea9d2935d72e4ccdb7cd7bcbc5907fd0a"
+        ["wasmtime-v41.0.0-aarch64-windows.zip"]="15528c688f54990d37e7d17479712a4d73314973e6d4b0658848535cc2283f91"
     )
     
     # Function to verify checksum if available
@@ -122,8 +116,9 @@ if [ "$DOWNLOAD_RUNTIME" = true ]; then
         
         local expected="${CHECKSUMS[$archive_name]:-}"
         if [ -z "$expected" ]; then
-            warn "    No checksum available for $archive_name"
-            return 0
+            error "No checksum available for $archive_name - cannot verify integrity"
+            error "This is a security requirement. Please add the checksum to CHECKSUMS."
+            return 1
         fi
         
         local actual
@@ -132,17 +127,17 @@ if [ "$DOWNLOAD_RUNTIME" = true ]; then
         elif command -v shasum >/dev/null 2>&1; then
             actual=$(shasum -a 256 "$file" | awk '{print $1}')
         else
-            warn "    sha256sum/shasum not available, skipping verification"
-            return 0
+            error "sha256sum/shasum not available - cannot verify integrity"
+            return 1
         fi
         
         if [ "$actual" = "$expected" ]; then
             log "    Checksum verified"
             return 0
         else
-            warn "    Checksum mismatch for $archive_name"
-            warn "    Expected: $expected"
-            warn "    Got:      $actual"
+            error "Checksum mismatch for $archive_name"
+            error "Expected: $expected"
+            error "Got:      $actual"
             return 1
         fi
     }
