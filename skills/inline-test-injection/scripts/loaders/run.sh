@@ -14,7 +14,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DIST_DIR="$SCRIPT_DIR/../dist"
 WASM_MODULE="$DIST_DIR/inject-inline.wasm"
-RUNTIME_DIR="$DIST_DIR/runtime"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+RUNTIME_DIR="$REPO_ROOT/runtimes"
 
 # Detect platform and get wasmtime path
 detect_wasmtime() {

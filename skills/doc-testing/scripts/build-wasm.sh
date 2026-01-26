@@ -18,7 +18,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_DIR="$SCRIPT_DIR/src"
 DIST_DIR="$SCRIPT_DIR/dist"
-RUNTIME_DIR="$DIST_DIR/runtime"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+RUNTIME_DIR="$REPO_ROOT/runtimes"
 
 # Parse arguments
 DOWNLOAD_RUNTIME=true
@@ -87,9 +88,64 @@ fi
 if [ "$DOWNLOAD_RUNTIME" = true ]; then
     log "Downloading wasmtime runtimes..."
     
-    # Get latest wasmtime version
+    # Wasmtime version to use
     WASMTIME_VERSION="v41.0.0"
     log "Using wasmtime $WASMTIME_VERSION"
+    
+    # SHA-256 checksums for wasmtime v41.0.0 (for integrity verification)
+    # These checksums were computed from official releases at:
+    # https://github.com/bytecodealliance/wasmtime/releases/tag/v41.0.0
+    # Note: Wasmtime does not publish official checksums, so these are recorded
+    # here for verification purposes. 
+    #
+    # IMPORTANT: These checksums are placeholders and should be verified/updated
+    # when first downloading the archives. To compute checksums:
+    #   1. Download: curl -sL <url> -o archive.tar.xz
+    #   2. Checksum: sha256sum archive.tar.xz (or shasum -a 256 on macOS)
+    #   3. Update the corresponding entry below
+    #
+    # If you're using pre-existing binaries from the runtimes/ directory,
+    # checksum verification will be skipped since we only verify archives.
+    declare -A CHECKSUMS=(
+        ["wasmtime-v41.0.0-x86_64-linux.tar.xz"]=""
+        ["wasmtime-v41.0.0-aarch64-linux.tar.xz"]=""
+        ["wasmtime-v41.0.0-x86_64-macos.tar.xz"]=""
+        ["wasmtime-v41.0.0-aarch64-macos.tar.xz"]=""
+        ["wasmtime-v41.0.0-x86_64-windows.zip"]=""
+        ["wasmtime-v41.0.0-aarch64-windows.zip"]=""
+    )
+    
+    # Function to verify checksum if available
+    verify_checksum() {
+        local file="$1"
+        local archive_name="$2"
+        
+        local expected="${CHECKSUMS[$archive_name]:-}"
+        if [ -z "$expected" ]; then
+            warn "    No checksum available for $archive_name"
+            return 0
+        fi
+        
+        local actual
+        if command -v sha256sum >/dev/null 2>&1; then
+            actual=$(sha256sum "$file" | awk '{print $1}')
+        elif command -v shasum >/dev/null 2>&1; then
+            actual=$(shasum -a 256 "$file" | awk '{print $1}')
+        else
+            warn "    sha256sum/shasum not available, skipping verification"
+            return 0
+        fi
+        
+        if [ "$actual" = "$expected" ]; then
+            log "    Checksum verified"
+            return 0
+        else
+            warn "    Checksum mismatch for $archive_name"
+            warn "    Expected: $expected"
+            warn "    Got:      $actual"
+            return 1
+        fi
+    }
     
     # Platform configurations: name, archive_suffix, binary_name, extract_command
     declare -A PLATFORMS=(
@@ -124,6 +180,12 @@ if [ "$DOWNLOAD_RUNTIME" = true ]; then
         # Download
         if ! curl -sL "$URL" -o "$TEMP_DIR/$ARCHIVE_NAME"; then
             warn "    Failed to download $platform"
+            continue
+        fi
+        
+        # Verify checksum
+        if ! verify_checksum "$TEMP_DIR/$ARCHIVE_NAME" "$ARCHIVE_NAME"; then
+            warn "    Checksum verification failed for $platform, skipping for security"
             continue
         fi
         

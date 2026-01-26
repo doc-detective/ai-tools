@@ -22,7 +22,8 @@ const __dirname = dirname(__filename);
 
 const DIST_DIR = join(__dirname, '..', 'dist');
 const WASM_MODULE = join(DIST_DIR, 'inject-inline.wasm');
-const RUNTIME_DIR = join(DIST_DIR, 'runtime');
+const REPO_ROOT = join(__dirname, '..', '..', '..', '..');
+const RUNTIME_DIR = join(REPO_ROOT, 'runtimes');
 
 /**
  * Detect wasmtime path - bundled first, then system

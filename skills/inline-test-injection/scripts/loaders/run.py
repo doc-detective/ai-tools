@@ -21,7 +21,8 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).parent.resolve()
 DIST_DIR = SCRIPT_DIR.parent / "dist"
 WASM_MODULE = DIST_DIR / "inject-inline.wasm"
-RUNTIME_DIR = DIST_DIR / "runtime"
+REPO_ROOT = SCRIPT_DIR.parent.parent.parent.parent
+RUNTIME_DIR = REPO_ROOT / "runtimes"
 
 
 def detect_wasmtime():
