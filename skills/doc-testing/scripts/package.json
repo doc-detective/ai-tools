@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "build": "./build-wasm.sh",
-    "test": "./test-wasm.sh"
+    "test": "./test-wasm.sh",
+    "postinstall": "../scripts/install-javy.sh"
   },
   "devDependencies": {
-    "esbuild": "^0.18.17"
+    "esbuild": "^0.27.2"
   }
 }

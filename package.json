@@ -1,9 +1,9 @@
 {
-  "name": "ai-tools",
+  "name": "agent-tools",
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "build:doc-testing": "cd skills/doc-testing/scripts && ./build-wasm.sh",
@@ -13,6 +13,6 @@
     "postinstall": "bash scripts/install-javy.sh || true"
   },
   "devDependencies": {
-    "esbuild": "^0.18.17"
+    "esbuild": "^0.27.2"
   }
 }
