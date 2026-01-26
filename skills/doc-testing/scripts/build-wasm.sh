@@ -116,8 +116,8 @@ if [ "$DOWNLOAD_RUNTIME" = true ]; then
         
         local expected="${CHECKSUMS[$archive_name]:-}"
         if [ -z "$expected" ]; then
-            error "No checksum available for $archive_name - cannot verify integrity"
-            error "This is a security requirement. Please add the checksum to CHECKSUMS."
+            warn "No checksum available for $archive_name - cannot verify integrity"
+            warn "This is a security requirement. Please add the checksum to CHECKSUMS."
             return 1
         fi
         
@@ -127,7 +127,7 @@ if [ "$DOWNLOAD_RUNTIME" = true ]; then
         elif command -v shasum >/dev/null 2>&1; then
             actual=$(shasum -a 256 "$file" | awk '{print $1}')
         else
-            error "sha256sum/shasum not available - cannot verify integrity"
+            warn "sha256sum/shasum not available - cannot verify integrity"
             return 1
         fi
         
@@ -135,9 +135,9 @@ if [ "$DOWNLOAD_RUNTIME" = true ]; then
             log "    Checksum verified"
             return 0
         else
-            error "Checksum mismatch for $archive_name"
-            error "Expected: $expected"
-            error "Got:      $actual"
+            warn "Checksum mismatch for $archive_name"
+            warn "Expected: $expected"
+            warn "Got:      $actual"
             return 1
         fi
     }
