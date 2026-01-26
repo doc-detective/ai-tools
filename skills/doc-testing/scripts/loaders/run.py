@@ -83,6 +83,8 @@ def run_with_wasmtime_cli(wasmtime_path, wasm_module, input_json):
         if "exitCode" in output_data:
             exit_code = int(output_data["exitCode"])
     except (json.JSONDecodeError, ValueError, TypeError):
+        # If the output is not valid JSON or lacks a usable "exitCode",
+        # fall back to the process return code determined above.
         pass
     
     return stdout.strip(), stderr.strip(), exit_code
@@ -136,14 +138,12 @@ def main():
         sys.exit(0)
     
     if arg == "--stdin":
-        input_mode = "stdin"
         spec_json = sys.stdin.read()
     elif arg.startswith("--"):
         print(f"Error: Unknown option: {arg}", file=sys.stderr)
         usage()
         sys.exit(2)
     else:
-        input_mode = "file"
         input_file = Path(arg)
         
         if not input_file.exists():
