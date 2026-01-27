@@ -60,14 +60,15 @@ export async function injectTool(input: InjectInput): Promise<InjectOutput> {
       fs.writeFileSync(source_file, modifiedContent);
     }
     
-    const linesModified = countModifiedLines(originalContent, modifiedContent);
+    // Count lines added (each comment adds lines to the document)
+    const linesAdded = modifiedContent.split('\n').length - originalContent.split('\n').length;
     
     return {
       success: true,
       applied: apply,
       changes: {
         inline_comments_added: commentsAdded,
-        lines_modified: linesModified,
+        lines_added: linesAdded,
       },
       preview: apply ? undefined : modifiedContent,
       modified_source: modifiedContent,
@@ -264,33 +265,4 @@ function objectToXml(obj: Record<string, unknown>): string {
     }
     return `<${key}>${escapeXml(String(value))}</${key}>`;
   }).join('');
-}
-
-/**
- * Count the number of lines that differ between two strings
- */
-function countModifiedLines(original: string, modified: string): number {
-  const originalLines = original.split('\n');
-  const modifiedLines = modified.split('\n');
-  
-  const maxLength = Math.max(originalLines.length, modifiedLines.length);
-  let diffCount = 0;
-
-  for (let i = 0; i < maxLength; i++) {
-    const originalLine = originalLines[i];
-    const modifiedLine = modifiedLines[i];
-
-    // Line added or removed
-    if (originalLine === undefined || modifiedLine === undefined) {
-      diffCount++;
-      continue;
-    }
-
-    // Line content changed
-    if (originalLine !== modifiedLine) {
-      diffCount++;
-    }
-  }
-
-  return diffCount;
 }

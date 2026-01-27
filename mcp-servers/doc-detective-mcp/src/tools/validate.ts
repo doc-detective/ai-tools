@@ -51,6 +51,12 @@ export async function validateTool(input: ValidateInput): Promise<ValidateOutput
     
     // Validate each test
     spec.tests.forEach((test, testIndex) => {
+      // Defensive check: ensure test is an object
+      if (typeof test !== 'object' || test === null) {
+        errors.push(`Test at index ${testIndex}: test must be an object`);
+        return;
+      }
+      
       const testId = test.id || test.testId || `test-${testIndex}`;
       
       // Check for steps
@@ -65,6 +71,12 @@ export async function validateTool(input: ValidateInput): Promise<ValidateOutput
       
       // Validate each step
       test.steps.forEach((step, stepIndex) => {
+        // Defensive check: ensure step is an object
+        if (typeof step !== 'object' || step === null) {
+          errors.push(`Test "${testId}", Step ${stepIndex}: step must be an object`);
+          return;
+        }
+        
         // Find the action key
         const actionKey = Object.keys(step).find(key => VALID_ACTIONS.includes(key));
         const hasActionProperty = step.action !== undefined;

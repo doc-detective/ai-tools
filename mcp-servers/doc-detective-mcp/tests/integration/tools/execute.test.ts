@@ -43,7 +43,7 @@ describe('Execute Tool', () => {
     });
 
     expect(result).toBeDefined();
-  }, 15000); // Increase timeout for CLI execution
+  }, 35000); // Timeout > executeTool's default 30000ms
 
   test('returns detailed per-test results', async () => {
     const result = await executeTool({
@@ -96,7 +96,7 @@ describe('Execute Tool', () => {
     });
 
     expect(result).toBeDefined();
-  });
+  }, 65000); // Timeout > executeTool's 60000ms custom timeout
 
   test('handles invalid spec gracefully', async () => {
     const result = await executeTool({

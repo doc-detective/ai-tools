@@ -78,7 +78,7 @@ export interface InjectOutput {
   applied: boolean;
   changes?: {
     inline_comments_added: number;
-    lines_modified: number;
+    lines_added: number;
   };
   preview?: string;
   modified_source?: string;
