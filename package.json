@@ -6,13 +6,10 @@
     "node": ">=20"
   },
   "scripts": {
-    "build:doc-testing": "cd skills/doc-testing/scripts && ./build-wasm.sh",
-    "test:doc-testing": "cd skills/doc-testing/scripts && ./test-wasm.sh",
-    "build:inline": "cd skills/inline-test-injection/scripts && ./build-wasm.sh",
-    "test:inline": "cd skills/inline-test-injection/scripts && ./test-wasm.sh",
-    "postinstall": "bash scripts/install-javy.sh || true"
+    "build:doc-testing": "cd skills/doc-testing/scripts && ./build-skill.sh",
+    "test:doc-testing": "cd skills/doc-testing/scripts && ./test-skill.sh",
+    "build:inline": "cd skills/inline-test-injection/scripts && ./build-skill.sh",
+    "test:inline": "cd skills/inline-test-injection/scripts && ./test-skill.sh"
   },
-  "devDependencies": {
-    "esbuild": "^0.27.2"
-  }
+  "devDependencies": {}
 }
