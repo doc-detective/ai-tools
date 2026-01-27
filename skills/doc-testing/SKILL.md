@@ -47,7 +47,7 @@ Test documentation procedures by converting them to Doc Detective test specifica
 echo '<your-spec-json>' > /tmp/spec.json
 
 # Run validator - MUST show "Validation PASSED"
-./scripts/loaders/run.sh /tmp/spec.json
+./scripts/dist/validate-test /tmp/spec.json
 ```
 
 **Do NOT return a spec without running validation. If validation fails, fix the spec and re-validate.**
@@ -64,7 +64,7 @@ echo '<your-spec-json>' > /tmp/spec.json
 **Efficiency tip:** For full workflows, chain commands. Example:
 ```bash
 # Generate, validate, and execute in sequence
-echo '{"tests":[...]}' > spec.json && ./scripts/loaders/run.sh spec.json && npx doc-detective run --input spec.json
+echo '{"tests":[...]}' > spec.json && ./scripts/dist/validate-test spec.json && npx doc-detective run --input spec.json
 ```
 
 ## Step 1: Text-to-Test Interpretation
@@ -162,7 +162,7 @@ Use selectors only when:
 
 2. Run the validator and show output:
    ```bash
-   ./scripts/loaders/run.sh /tmp/test-spec.json
+   ./scripts/dist/validate-test /tmp/test-spec.json
    ```
 
 3. Only if output shows `Validation PASSED`, proceed to return the spec.
@@ -281,7 +281,7 @@ If user accepts injection:
 
 2. **Show preview first** (default mode - no `--apply` flag):
    ```bash
-   ./skills/inline-test-injection/scripts/loaders/run.sh /tmp/doc-detective-spec-<timestamp>.json <source-file-path>
+   ./skills/inline-test-injection/scripts/dist/inline-test-injection /tmp/doc-detective-spec-<timestamp>.json <source-file-path>
    ```
    This displays a diff of planned changes without modifying the file.
 
@@ -292,7 +292,7 @@ If user accepts injection:
 
 4. **Apply changes** on confirmation:
    ```bash
-   ./skills/inline-test-injection/scripts/loaders/run.sh /tmp/doc-detective-spec-<timestamp>.json <source-file-path> --apply
+   ./skills/inline-test-injection/scripts/dist/inline-test-injection /tmp/doc-detective-spec-<timestamp>.json <source-file-path> --apply
    ```
 
 5. **Clean up** temp file after successful apply. Retain on error for debugging.
@@ -316,7 +316,7 @@ Injection offers:
 
 The injection tool is part of the `inline-test-injection` skill:
 ```
-skills/inline-test-injection/scripts/loaders/run.sh
+skills/inline-test-injection/scripts/dist/inline-test-injection
 ```
 
 If the tool is not available, inform the user and return the JSON spec without injection.
@@ -438,7 +438,7 @@ Doc Detective outputs `testResults-<timestamp>.json`:
 1. [ ] **NO "action" property** - Check every step: if you see `"action":` anywhere, DELETE IT and rewrite. Use `"goTo":`, `"click":`, `"find":` etc. as the key itself.
 2. [ ] **Text-based matching** - Use `"click": "Submit"` not `"click": "#btn"`
 3. [ ] **Valid structure** - `tests` array with `testId` and `steps` in each test
-4. [ ] **EXECUTE VALIDATION** - Run `./scripts/loaders/run.sh` on the spec file and include the output in your response
+4. [ ] **EXECUTE VALIDATION** - Run `./scripts/dist/validate-test` on the spec file and include the output in your response
 5. [ ] **Validation PASSED** - Output must show "Validation PASSED". If not, fix and re-run.
 
 **STOP: Did you run the validator and show its output? If not, do it now before responding.**

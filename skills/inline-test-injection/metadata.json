@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "organization": "Doc Detective Agency",
+  "date": "January 2026",
+  "abstract": "Inject Doc Detective test specifications directly into documentation files using HTML comments. Supports Markdown, AsciiDoc, HTML, and MDX formats with automatic format detection.",
+  "references": [
+    "https://doc-detective.com",
+    "https://github.com/doc-detective/doc-detective"
+  ]
+}

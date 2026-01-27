@@ -1,0 +1,26 @@
+{
+  "tests": [
+    {
+      "testId": "getting-started-visit-homepage",
+      "description": "Verify the 'Visit the Homepage' procedure from Getting Started guide",
+      "contentPath": "scripts/sample-docs.md",
+      "steps": [
+        {
+          "stepId": "navigate-to-doc-detective",
+          "description": "Navigate to https://doc-detective.com",
+          "goTo": "https://doc-detective.com"
+        },
+        {
+          "stepId": "verify-heading",
+          "description": "Verify you see the Doc Detective heading",
+          "find": "Doc Detective"
+        },
+        {
+          "stepId": "verify-get-started-link",
+          "description": "Look for the Get started link",
+          "find": "Get started"
+        }
+      ]
+    }
+  ]
+}
