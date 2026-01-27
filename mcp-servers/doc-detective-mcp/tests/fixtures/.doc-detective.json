@@ -1,0 +1,6 @@
+{
+  "input": ["**/*.md"],
+  "output": "./test-results",
+  "recursive": true,
+  "logLevel": "info"
+}

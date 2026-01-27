@@ -1,0 +1,23 @@
+{
+  "tests": [
+    {
+      "id": "login-test",
+      "description": "Test login flow",
+      "steps": [
+        {
+          "action": "goTo",
+          "url": "https://example.com/login"
+        },
+        {
+          "action": "find",
+          "selector": "[data-testid='sign-in-button']",
+          "timeout": 5000
+        },
+        {
+          "action": "click",
+          "selector": "[data-testid='sign-in-button']"
+        }
+      ]
+    }
+  ]
+}

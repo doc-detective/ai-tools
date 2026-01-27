@@ -1,0 +1,58 @@
+{
+  "summary": {
+    "specs": 1,
+    "tests": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0
+  },
+  "results": [
+    {
+      "testId": "login-test",
+      "description": "Test login flow",
+      "status": "PASSED",
+      "duration": 2500,
+      "steps": [
+        {
+          "stepId": "step-1",
+          "action": "goTo",
+          "status": "PASSED",
+          "duration": 1200
+        },
+        {
+          "stepId": "step-2",
+          "action": "find",
+          "status": "PASSED",
+          "duration": 800
+        },
+        {
+          "stepId": "step-3",
+          "action": "click",
+          "status": "PASSED",
+          "duration": 500
+        }
+      ]
+    },
+    {
+      "testId": "signup-test",
+      "description": "Test signup flow",
+      "status": "FAILED",
+      "duration": 5000,
+      "steps": [
+        {
+          "stepId": "step-1",
+          "action": "goTo",
+          "status": "PASSED",
+          "duration": 1000
+        },
+        {
+          "stepId": "step-2",
+          "action": "find",
+          "status": "FAILED",
+          "duration": 4000,
+          "error": "Element not found: [data-testid='signup-form']"
+        }
+      ]
+    }
+  ]
+}

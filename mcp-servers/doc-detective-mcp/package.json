@@ -1,0 +1,58 @@
+{
+  "name": "doc-detective-mcp",
+  "version": "1.0.0",
+  "description": "MCP server exposing Doc Detective test generation, validation, execution, analysis, and injection functionality",
+  "main": "dist/index.js",
+  "bin": {
+    "doc-detective-mcp": "dist/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
+    "test:coverage": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "keywords": [
+    "doc-detective",
+    "mcp",
+    "model-context-protocol",
+    "documentation-testing",
+    "test-generation"
+  ],
+  "author": {
+    "name": "Doc Detective Agency"
+  },
+  "license": "MIT",
+  "homepage": "https://doc-detective.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/doc-detective/agent-tools.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "doc-detective": "^3.6.3",
+    "doc-detective-common": "^3.6.1",
+    "js-yaml": "^4.1.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.11.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.3.3"
+  }
+}
