@@ -114,10 +114,30 @@ function injectComments(
     pattern: RegExp;
   }> = [];
   
+  // Defensive check: ensure spec.tests is an array
+  if (!Array.isArray(spec.tests)) {
+    return { modifiedContent, commentsAdded };
+  }
+  
   for (const test of spec.tests) {
+    // Defensive check: ensure test is a non-null object
+    if (typeof test !== 'object' || test === null) {
+      continue;
+    }
+    
     const testId = test.id || test.testId || 'unknown';
     
+    // Defensive check: ensure test.steps is an array
+    if (!Array.isArray(test.steps)) {
+      continue;
+    }
+    
     for (const step of test.steps) {
+      // Defensive check: ensure step is a non-null object
+      if (typeof step !== 'object' || step === null) {
+        continue;
+      }
+      
       const pattern = getStepPattern(step);
       if (pattern) {
         stepsToInject.push({ step, testId, pattern });
@@ -132,6 +152,13 @@ function injectComments(
       // Find the line containing the match
       const beforeMatch = modifiedContent.substring(0, match.index);
       const lineStart = beforeMatch.lastIndexOf('\n') + 1;
+      const lineEnd = modifiedContent.indexOf('\n', match.index);
+      const line = modifiedContent.substring(lineStart, lineEnd === -1 ? undefined : lineEnd);
+      
+      // Skip if line already has a doc-detective comment
+      if (line.includes('doc-detective-test:')) {
+        continue;
+      }
       
       // Generate the comment
       const comment = generateComment(step, testId, format, syntax);

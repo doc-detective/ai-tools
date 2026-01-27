@@ -11,7 +11,7 @@ const VALID_ACTIONS = [
   'goTo', 'find', 'click', 'type', 'httpRequest', 
   'screenshot', 'runShell', 'wait', 'checkLink',
   'setVariables', 'record', 'stopRecord', 'saveRecording'
-];
+] as const;
 
 /**
  * Validate a Doc Detective test specification
@@ -78,7 +78,7 @@ export async function validateTool(input: ValidateInput): Promise<ValidateOutput
         }
         
         // Find the action key
-        const actionKey = Object.keys(step).find(key => VALID_ACTIONS.includes(key));
+        const actionKey = Object.keys(step).find(key => (VALID_ACTIONS as readonly string[]).includes(key));
         const hasActionProperty = step.action !== undefined;
         
         if (!actionKey && !hasActionProperty) {
@@ -89,7 +89,7 @@ export async function validateTool(input: ValidateInput): Promise<ValidateOutput
         if (hasActionProperty) {
           if (typeof step.action !== 'string') {
             errors.push(`Test "${testId}", Step ${stepIndex}: "action" must be a string. Valid actions: ${VALID_ACTIONS.join(', ')}`);
-          } else if (!VALID_ACTIONS.includes(step.action)) {
+          } else if (!(VALID_ACTIONS as readonly string[]).includes(step.action)) {
             errors.push(`Test "${testId}", Step ${stepIndex}: Invalid action "${step.action}". Valid actions: ${VALID_ACTIONS.join(', ')}`);
           }
         }
