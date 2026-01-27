@@ -47,7 +47,7 @@ Test documentation procedures by converting them to Doc Detective test specifica
 echo '<your-spec-json>' > /tmp/spec.json
 
 # Run validator - MUST show "Validation PASSED"
-./scripts/loaders/run.sh /tmp/spec.json
+./scripts/dist/validate-test /tmp/spec.json
 ```
 
 **Do NOT return a spec without running validation. If validation fails, fix the spec and re-validate.**
