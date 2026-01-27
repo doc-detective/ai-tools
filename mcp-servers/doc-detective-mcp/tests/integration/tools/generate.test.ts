@@ -1,5 +1,7 @@
-import { describe, test, expect, beforeAll } from '@jest/globals';
+import { describe, test, expect, beforeAll, afterEach } from '@jest/globals';
 import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -9,6 +11,9 @@ const fixturesDir = path.resolve(__dirname, '../../fixtures');
 // Will be imported once implementation exists
 let generateTool: (input: any) => Promise<any>;
 
+// Track temp files for cleanup
+let tempOutputPath: string | null = null;
+
 describe('Generate Tool', () => {
   beforeAll(async () => {
     try {
@@ -16,6 +21,14 @@ describe('Generate Tool', () => {
       generateTool = module.generateTool;
     } catch (e) {
       // Expected to fail in RED phase
+    }
+  });
+
+  afterEach(() => {
+    // Clean up temp files
+    if (tempOutputPath && fs.existsSync(tempOutputPath)) {
+      fs.unlinkSync(tempOutputPath);
+      tempOutputPath = null;
     }
   });
 
@@ -75,13 +88,14 @@ describe('Generate Tool', () => {
   });
 
   test('supports output_file option', async () => {
+    tempOutputPath = path.join(os.tmpdir(), 'test-output-spec.json');
     const result = await generateTool({
       source_file: path.join(fixturesDir, 'sample-docs.md'),
-      output_file: '/tmp/test-output-spec.json',
+      output_file: tempOutputPath,
     });
     
     expect(result.success).toBe(true);
-    expect(result.output_path).toBe('/tmp/test-output-spec.json');
+    expect(result.output_path).toBe(tempOutputPath);
   });
 
   test('returns human-readable message on success', async () => {

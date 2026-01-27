@@ -3,10 +3,11 @@
  */
 
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import { spawn } from 'child_process';
 import type { ExecuteInput, ExecuteOutput, TestResult } from '../types/index.js';
-import { loadSpec, hasValidStructure } from '../utils/spec-handler.js';
+import { loadSpec } from '../utils/spec-handler.js';
 import { validateTool } from './validate.js';
 import { formatError } from '../utils/errors.js';
 import { loadConfig } from '../utils/config.js';
@@ -50,7 +51,7 @@ export async function executeTool(input: ExecuteInput): Promise<ExecuteOutput> {
     let tempFile: string | null = null;
     
     if (!fs.existsSync(spec_input)) {
-      tempFile = `/tmp/doc-detective-spec-${Date.now()}.json`;
+      tempFile = path.join(os.tmpdir(), `doc-detective-spec-${Date.now()}.json`);
       fs.writeFileSync(tempFile, JSON.stringify(spec, null, 2));
       specFile = tempFile;
     }

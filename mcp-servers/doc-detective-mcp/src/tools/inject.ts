@@ -3,11 +3,9 @@
  */
 
 import * as fs from 'fs';
-import * as path from 'path';
 import yaml from 'js-yaml';
 import type { InjectInput, InjectOutput, DocDetectiveSpec, DocDetectiveStep } from '../types/index.js';
 import { loadSpec } from '../utils/spec-handler.js';
-import { formatError } from '../utils/errors.js';
 
 // Format detection patterns
 const FORMAT_PATTERNS = {
@@ -152,27 +150,42 @@ function injectComments(
 
 /**
  * Get a regex pattern to find where a step should be injected
+ * Supports both action-key schema (goTo: url) and action-field schema (action: "goTo", url: "...")
  */
 function getStepPattern(step: DocDetectiveStep): RegExp | null {
-  if (step.goTo) {
-    const url = typeof step.goTo === 'string' ? step.goTo : (step.goTo as any).url;
-    if (url) {
+  // Normalize action-field schema to action-key schema
+  const action = typeof step.action === 'string' ? step.action.toLowerCase() : undefined;
+  const url = typeof (step as any).url === 'string' ? (step as any).url : undefined;
+  const selector = typeof (step as any).selector === 'string' ? (step as any).selector : undefined;
+
+  if (step.goTo || (action === 'goto' && url)) {
+    const targetUrl =
+      typeof step.goTo === 'string'
+        ? step.goTo
+        : (step.goTo as any)?.url ?? url;
+    if (targetUrl) {
       // Escape special regex characters in URL
-      const escaped = url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escaped = targetUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       return new RegExp(escaped, 'i');
     }
   }
   
-  if (step.click) {
-    const target = typeof step.click === 'string' ? step.click : (step.click as any).selector;
+  if (step.click || (action === 'click' && selector)) {
+    const target =
+      typeof step.click === 'string'
+        ? step.click
+        : (step.click as any)?.selector ?? selector;
     if (target) {
       const escaped = target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       return new RegExp(`(?:click|tap|press|select).*${escaped}`, 'i');
     }
   }
   
-  if (step.find) {
-    const target = typeof step.find === 'string' ? step.find : (step.find as any).selector;
+  if (step.find || (action === 'find' && selector)) {
+    const target =
+      typeof step.find === 'string'
+        ? step.find
+        : (step.find as any)?.selector ?? selector;
     if (target) {
       const escaped = target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       return new RegExp(`(?:find|verify|see|check).*${escaped}`, 'i');
@@ -184,6 +197,7 @@ function getStepPattern(step: DocDetectiveStep): RegExp | null {
 
 /**
  * Generate a comment in the appropriate format
+ * Supports both action-key schema and action-field schema
  */
 function generateComment(
   step: DocDetectiveStep,
@@ -193,10 +207,15 @@ function generateComment(
 ): string {
   // Create the step object for the comment
   const stepObj: Record<string, unknown> = {};
-  
-  if (step.goTo) stepObj.goTo = step.goTo;
-  if (step.click) stepObj.click = step.click;
-  if (step.find) stepObj.find = step.find;
+
+  // Normalize action-field schema to action-key schema
+  const action = typeof step.action === 'string' ? step.action.toLowerCase() : undefined;
+  const url = typeof (step as any).url === 'string' ? (step as any).url : undefined;
+  const selector = typeof (step as any).selector === 'string' ? (step as any).selector : undefined;
+
+  if (step.goTo || (action === 'goto' && url)) stepObj.goTo = step.goTo ?? { url };
+  if (step.click || (action === 'click' && selector)) stepObj.click = step.click ?? { selector };
+  if (step.find || (action === 'find' && selector)) stepObj.find = step.find ?? { selector };
   if (step.type) stepObj.type = step.type;
   if (step.wait) stepObj.wait = step.wait;
   
@@ -242,6 +261,24 @@ function countModifiedLines(original: string, modified: string): number {
   const originalLines = original.split('\n');
   const modifiedLines = modified.split('\n');
   
-  // Simple diff: count lines that are new or different
-  return Math.abs(modifiedLines.length - originalLines.length);
+  const maxLength = Math.max(originalLines.length, modifiedLines.length);
+  let diffCount = 0;
+
+  for (let i = 0; i < maxLength; i++) {
+    const originalLine = originalLines[i];
+    const modifiedLine = modifiedLines[i];
+
+    // Line added or removed
+    if (originalLine === undefined || modifiedLine === undefined) {
+      diffCount++;
+      continue;
+    }
+
+    // Line content changed
+    if (originalLine !== modifiedLine) {
+      diffCount++;
+    }
+  }
+
+  return diffCount;
 }

@@ -2,7 +2,6 @@
  * Validate Tool - Validates Doc Detective test specifications
  */
 
-import * as fs from 'fs';
 import type { ValidateInput, ValidateOutput, DocDetectiveSpec } from '../types/index.js';
 import { loadSpec, hasValidStructure } from '../utils/spec-handler.js';
 import { formatError } from '../utils/errors.js';
@@ -64,14 +63,14 @@ export async function validateTool(input: ValidateInput): Promise<ValidateOutput
       
       // Validate each step
       test.steps.forEach((step, stepIndex) => {
-        const stepId = step.stepId || `step-${stepIndex}`;
-        
         // Find the action key
         const actionKey = Object.keys(step).find(key => VALID_ACTIONS.includes(key));
         const hasActionProperty = step.action !== undefined;
         
         if (!actionKey && !hasActionProperty) {
           errors.push(`Test "${testId}", Step ${stepIndex}: No valid action found. Valid actions: ${VALID_ACTIONS.join(', ')}`);
+        } else if (hasActionProperty && !actionKey && typeof step.action === 'string' && !VALID_ACTIONS.includes(step.action)) {
+          errors.push(`Test "${testId}", Step ${stepIndex}: Invalid action "${step.action}". Valid actions: ${VALID_ACTIONS.join(', ')}`);
         }
         
         // Validate specific actions

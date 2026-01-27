@@ -1,5 +1,6 @@
-import { describe, test, expect, beforeAll } from '@jest/globals';
+import { describe, test, expect, beforeAll, afterEach } from '@jest/globals';
 import * as path from 'path';
+import * as os from 'os';
 import * as fs from 'fs';
 import { fileURLToPath } from 'url';
 
@@ -9,6 +10,9 @@ const fixturesDir = path.resolve(__dirname, '../../fixtures');
 
 let injectTool: (input: any) => Promise<any>;
 
+// Track temp files for cleanup
+let tempFile: string | null = null;
+
 describe('Inject Tool', () => {
   beforeAll(async () => {
     try {
@@ -16,6 +20,14 @@ describe('Inject Tool', () => {
       injectTool = module.injectTool;
     } catch (e) {
       // Expected to fail in RED phase
+    }
+  });
+
+  afterEach(() => {
+    // Clean up temp files
+    if (tempFile && fs.existsSync(tempFile)) {
+      fs.unlinkSync(tempFile);
+      tempFile = null;
     }
   });
 
@@ -44,8 +56,8 @@ describe('Inject Tool', () => {
   });
 
   test('applies changes when apply is true', async () => {
-    // Create a temp file for this test
-    const tempFile = '/tmp/test-inject-doc.md';
+    // Create a temp file for this test using cross-platform temp dir
+    tempFile = path.join(os.tmpdir(), `test-inject-doc-${Date.now()}.md`);
     const originalContent = fs.readFileSync(
       path.join(fixturesDir, 'sample-docs.md'),
       'utf-8'
@@ -60,11 +72,7 @@ describe('Inject Tool', () => {
 
     expect(result.success).toBe(true);
     expect(result.applied).toBe(true);
-
-    // Cleanup
-    if (fs.existsSync(tempFile)) {
-      fs.unlinkSync(tempFile);
-    }
+    // Cleanup handled by afterEach
   });
 
   test('returns modified source content', async () => {

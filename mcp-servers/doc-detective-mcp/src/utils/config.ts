@@ -4,6 +4,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import yaml from 'js-yaml';
 
 export interface DocDetectiveConfig {
   input?: string[];
@@ -28,7 +29,11 @@ export function loadConfig(configPath?: string, baseDir?: string): DocDetectiveC
   if (configPath && fs.existsSync(configPath)) {
     try {
       const content = fs.readFileSync(configPath, 'utf-8');
-      return { ...DEFAULT_CONFIG, ...JSON.parse(content) };
+      const ext = path.extname(configPath).toLowerCase();
+      const parsed = (ext === '.yaml' || ext === '.yml')
+        ? yaml.load(content) as DocDetectiveConfig
+        : JSON.parse(content);
+      return { ...DEFAULT_CONFIG, ...parsed };
     } catch {
       return DEFAULT_CONFIG;
     }
@@ -40,7 +45,7 @@ export function loadConfig(configPath?: string, baseDir?: string): DocDetectiveC
     path.dirname(baseDir || process.cwd()),
   ];
   
-  const configNames = ['.doc-detective.json', 'doc-detective.json', '.doc-detective.yaml'];
+  const configNames = ['.doc-detective.json', 'doc-detective.json', '.doc-detective.yaml', '.doc-detective.yml'];
   
   for (const dir of searchDirs) {
     for (const name of configNames) {
@@ -48,7 +53,11 @@ export function loadConfig(configPath?: string, baseDir?: string): DocDetectiveC
       if (fs.existsSync(fullPath)) {
         try {
           const content = fs.readFileSync(fullPath, 'utf-8');
-          return { ...DEFAULT_CONFIG, ...JSON.parse(content) };
+          const ext = path.extname(name).toLowerCase();
+          const parsed = (ext === '.yaml' || ext === '.yml')
+            ? yaml.load(content) as DocDetectiveConfig
+            : JSON.parse(content);
+          return { ...DEFAULT_CONFIG, ...parsed };
         } catch {
           continue;
         }

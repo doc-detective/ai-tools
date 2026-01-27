@@ -22,8 +22,10 @@ describe('MCP Server Framework', () => {
 
   test('server has correct name', () => {
     const { server } = createServer();
-    // Server name should be set in serverInfo
+    // Verify server name matches expected value
     expect(server).toBeDefined();
+    // Access serverInfo to verify name (internal property access)
+    expect((server as any)._serverInfo?.name).toBe('doc-detective-mcp');
   });
 
   test('registers exactly 5 tools', () => {

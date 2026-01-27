@@ -9,7 +9,7 @@ This guide shows how to log in to the application.
 
 ## Login Steps
 
-1. Navigate to https://example.com/login
+1. Navigate to [https://example.com/login](https://example.com/login)
 2. Click the "Sign In" button
 3. Enter your email in the email field
 4. Enter your password in the password field
@@ -18,7 +18,7 @@ This guide shows how to log in to the application.
 
 ## Creating a New Account
 
-1. Go to https://example.com/signup
+1. Go to [https://example.com/signup](https://example.com/signup)
 2. Fill in your name
 3. Enter a valid email address
 4. Create a strong password

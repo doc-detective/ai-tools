@@ -54,10 +54,15 @@ describe('Execute Tool', () => {
       spec_input: path.join(fixturesDir, 'sample-spec.json'),
     });
 
+    // If execution succeeds, verify detailed results structure
+    // If it fails (e.g., no browser in CI), verify failure is graceful
     if (result.success) {
       expect(result.results).toBeDefined();
       expect(result.results.test_results).toBeDefined();
       expect(Array.isArray(result.results.test_results)).toBe(true);
+    } else {
+      // Ensure failure is graceful with a message
+      expect(result.message).toBeDefined();
     }
   });
 
@@ -66,11 +71,16 @@ describe('Execute Tool', () => {
       spec_input: path.join(fixturesDir, 'sample-spec.json'),
     });
 
+    // If execution succeeds, verify summary structure
+    // If it fails (e.g., no browser in CI), verify failure is graceful
     if (result.success) {
       expect(result.results.total_tests).toBeDefined();
       expect(typeof result.results.total_tests).toBe('number');
       expect(result.results.passed).toBeDefined();
       expect(result.results.failed).toBeDefined();
+    } else {
+      // Ensure failure is graceful with a message
+      expect(result.message).toBeDefined();
     }
   });
 
