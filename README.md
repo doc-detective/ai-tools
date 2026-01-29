@@ -79,7 +79,7 @@ Then use the plugin commands:
 
 - Doc Detective installed globally, via Docker, or accessible via npx:
   - **Global**: `doc-detective` command available
-  - **Docker**: Docker installed and `doc-detective/doc-detective` image available
+  - **Docker**: Docker installed and `docdetective/docdetective` image available
   - **NPX**: npx available (included with Node.js 15.1.0+)
 
 ## Usage
