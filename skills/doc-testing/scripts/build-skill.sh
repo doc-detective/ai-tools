@@ -1,8 +1,6 @@
-#!/usr/bin/env bash
-set -e
-
-cd src
-bun --version
-bun install
-bun build --compile --minify validate-test.js --outfile ../dist/validate-test
-bun build --compile --minify fix-tests.mjs --outfile ../dist/fix-tests
+#!/bin/bash
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/src"
+npm install
+npm run build

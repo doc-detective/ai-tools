@@ -1,5 +1,14 @@
 {
   "dependencies": {
     "doc-detective-common": "^3.6.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.2"
+  },
+  "scripts": {
+    "prebuild": "npm install",
+    "build": "npm run build-fix-tests && npm run build-validate-test",
+    "build-fix-tests": "npx esbuild fix-tests.mjs --bundle --minify --outfile=../dist/fix-tests.js --platform=node",
+    "build-validate-test": "npx esbuild validate-test.js --bundle --minify --outfile=../dist/validate-test.js --platform=node"
   }
 }

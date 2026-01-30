@@ -130,14 +130,19 @@ doc-detective/
 │   │   ├── references/
 │   │   │   └── actions.md       # Action reference
 │   │   └── scripts/
-│   │       └── validate-test.js # Validation script
+│   │       ├── src/             # Source files
+│   │       │   ├── validate-test.js
+│   │       │   └── fix-tests.mjs
+│   │       └── dist/            # Bundled output
+│   │           ├── validate-test.js
+│   │           └── fix-tests.js
 │   └── inline-test-injection/   # Inline injection skill
 │       ├── SKILL.md
 │       ├── references/
 │       │   └── markup-patterns.md
 │       └── scripts/
-│           ├── inject-inline.mjs
-│           └── format-utils.mjs
+│           └── dist/
+│               └── inline-test-injection.js
 ├── commands/
 │   ├── generate.md             # Generate tests command
 │   ├── inject.md               # Inject inline tests command

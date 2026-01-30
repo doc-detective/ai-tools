@@ -10,7 +10,7 @@
 #
 # Requirements:Add dist directories to .gitignore
 
-#   - bun (for building inject-inline script)
+#   - node (for running inject-inline script)
 #   - claude CLI (for skill tests)
 
 set -euo pipefail
@@ -87,13 +87,13 @@ trap "rm -rf $TEST_OUTPUT_DIR" EXIT
 # =============================================================================
 echo "--- Prerequisites Check ---"
 
-BUN_AVAILABLE=false
-if command -v bun &> /dev/null; then
-    BUN_VERSION=$(bun --version 2>/dev/null || echo "unknown")
-    echo "Bun: $BUN_VERSION"
-    BUN_AVAILABLE=true
+NODE_AVAILABLE=false
+if command -v node &> /dev/null; then
+    NODE_VERSION=$(node --version 2>/dev/null || echo "unknown")
+    echo "Node: $NODE_VERSION"
+    NODE_AVAILABLE=true
 else
-    echo "Bun: not found (build tests will be skipped)"
+    echo "Node: not found (tests will be skipped)"
 fi
 
 CLAUDE_AVAILABLE=false
@@ -106,15 +106,12 @@ else
 fi
 
 # Check if dist exists
-INJECT_SCRIPT="$SCRIPT_DIR/dist/inline-test-injection"
-if [ -x "$INJECT_SCRIPT" ]; then
-    echo "Inject script: $INJECT_SCRIPT (compiled)"
-elif [ -f "$SCRIPT_DIR/src/inject-inline.mjs" ]; then
-    INJECT_SCRIPT="bun $SCRIPT_DIR/src/inject-inline.mjs"
-    echo "Inject script: via bun (not compiled)"
+INJECT_SCRIPT=""
+if [ -f "$SCRIPT_DIR/dist/inline-test-injection.js" ]; then
+    INJECT_SCRIPT="node $SCRIPT_DIR/dist/inline-test-injection.js"
+    echo "Inject script: $SCRIPT_DIR/dist/inline-test-injection.js (bundled)"
 else
-    echo "Inject script: not found"
-    INJECT_SCRIPT=""
+    echo "Inject script: not found (run build-skill.sh first)"
 fi
 
 echo ""

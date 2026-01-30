@@ -101,7 +101,7 @@ Use selectors only when:
 After generating the spec, validate it:
 
 ```bash
-echo '<generated-spec>' | node skills/doc-testing/scripts/validate-test.js --stdin
+echo '<generated-spec>' | node skills/doc-testing/scripts/dist/validate-test.js --stdin
 ```
 
 If validation fails:

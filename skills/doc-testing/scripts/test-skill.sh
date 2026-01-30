@@ -179,7 +179,7 @@ EOF
     # Test 3: validate-test shows usage when no args
     echo ""
     echo "--- Test 3: Validator shows usage with no args ---"
-    OUTPUT=$(./scripts/dist/validate-test 2>&1 || true)
+    OUTPUT=$(node ./scripts/dist/validate-test.js 2>&1 || true)
     if echo "$OUTPUT" | grep -q "Usage:"; then
         pass "Validator shows usage message"
     else
@@ -189,7 +189,7 @@ EOF
     # Test 4: Valid test spec passes validation
     echo ""
     echo "--- Test 4: Valid test spec passes validation ---"
-    if cat << 'EOF' | ./scripts/dist/validate-test --stdin > /dev/null 2>&1
+    if cat << 'EOF' | node ./scripts/dist/validate-test.js --stdin > /dev/null 2>&1
 { "tests": [{ "testId": "simple-test", "steps": [{ "goTo": "https://example.com" }, { "find": "Welcome" }, { "click": "Login" }] }] }
 EOF
     then
@@ -201,7 +201,7 @@ EOF
     # Test 5: Missing tests array fails validation
     echo ""
     echo "--- Test 5: Missing tests array fails validation ---"
-    if cat << 'EOF' | ./scripts/dist/validate-test --stdin > /dev/null 2>&1
+    if cat << 'EOF' | node ./scripts/dist/validate-test.js --stdin > /dev/null 2>&1
 { "notTests": [] }
 EOF
     then
@@ -213,7 +213,7 @@ EOF
     # Test 6: Unknown action fails validation
     echo ""
     echo "--- Test 6: Unknown action fails validation ---"
-    if cat << 'EOF' | ./scripts/dist/validate-test --stdin > /dev/null 2>&1
+    if cat << 'EOF' | node ./scripts/dist/validate-test.js --stdin > /dev/null 2>&1
 { "tests": [{ "testId": "test-1", "steps": [{ "unknownAction": "value" }] }] }
 EOF
     then
@@ -225,7 +225,7 @@ EOF
     # Test 7: Invalid type action fails validation
     echo ""
     echo "--- Test 7: Invalid type action fails validation ---"
-    if cat << 'EOF' | ./scripts/dist/validate-test --stdin > /dev/null 2>&1
+    if cat << 'EOF' | node ./scripts/dist/validate-test.js --stdin > /dev/null 2>&1
 { "tests": [{ "testId": "test-1", "steps": [{ "type": "should be object with keys" }] }] }
 EOF
     then
@@ -237,7 +237,7 @@ EOF
     # Test 8: Empty tests array fails validation
     echo ""
     echo "--- Test 8: Empty tests array fails validation ---"
-    if cat << 'EOF' | ./scripts/dist/validate-test --stdin > /dev/null 2>&1
+    if cat << 'EOF' | node ./scripts/dist/validate-test.js --stdin > /dev/null 2>&1
 { "tests": [] }
 EOF
     then
@@ -249,7 +249,7 @@ EOF
     # Test 9: Empty steps array fails validation
     echo ""
     echo "--- Test 9: Empty steps array fails validation ---"
-    if cat << 'EOF' | ./scripts/dist/validate-test --stdin > /dev/null 2>&1
+    if cat << 'EOF' | node ./scripts/dist/validate-test.js --stdin > /dev/null 2>&1
 { "tests": [{ "testId": "test-1", "steps": [] }] }
 EOF
     then
@@ -261,7 +261,7 @@ EOF
     # Test 10: All known actions are accepted
     echo ""
     echo "--- Test 10: All known actions are accepted ---"
-    if cat << 'EOF' | ./scripts/dist/validate-test --stdin > /dev/null 2>&1
+    if cat << 'EOF' | node ./scripts/dist/validate-test.js --stdin > /dev/null 2>&1
 {
   "tests": [{
     "testId": "all-actions",
@@ -299,8 +299,8 @@ EOF
     # Test 10a: fix-tests shows usage when no args
     echo ""
     echo "--- Test 10a: fix-tests shows usage with no args ---"
-    if [ -f "./scripts/dist/fix-tests" ]; then
-        OUTPUT=$(./scripts/dist/fix-tests 2>&1 || true)
+    if [ -f "./scripts/dist/fix-tests.js" ]; then
+        OUTPUT=$(node ./scripts/dist/fix-tests.js 2>&1 || true)
         if echo "$OUTPUT" | grep -qiE "Usage:|fix-tests"; then
             pass "fix-tests shows usage message"
         else
@@ -313,8 +313,8 @@ EOF
     # Test 10b: fix-tests with --help shows options
     echo ""
     echo "--- Test 10b: fix-tests --help shows options ---"
-    if [ -f "./scripts/dist/fix-tests" ]; then
-        OUTPUT=$(./scripts/dist/fix-tests --help 2>&1 || true)
+    if [ -f "./scripts/dist/fix-tests.js" ]; then
+        OUTPUT=$(node ./scripts/dist/fix-tests.js --help 2>&1 || true)
         if echo "$OUTPUT" | grep -qiE "threshold.*spec.*auto-fix|Options:"; then
             pass "fix-tests --help shows options"
         else
@@ -327,7 +327,7 @@ EOF
     # Test 10c: fix-tests reports no failures when given passing results
     echo ""
     echo "--- Test 10c: fix-tests handles passing results ---"
-    if [ -f "./scripts/dist/fix-tests" ]; then
+    if [ -f "./scripts/dist/fix-tests.js" ]; then
         # Create passing results file
         cat > "$TEST_OUTPUT_DIR/passing-results.json" << 'EOF'
 {
@@ -342,7 +342,7 @@ EOF
   ]
 }
 EOF
-        OUTPUT=$(./scripts/dist/fix-tests "$TEST_OUTPUT_DIR/passing-results.json" --dry-run 2>&1 || true)
+        OUTPUT=$(node ./scripts/dist/fix-tests.js "$TEST_OUTPUT_DIR/passing-results.json" --dry-run 2>&1 || true)
         if echo "$OUTPUT" | grep -qiE "No failures found|0.*failure"; then
             pass "fix-tests correctly reports no failures for passing results"
         else
@@ -355,7 +355,7 @@ EOF
     # Test 10d: fix-tests detects failures and proposes fixes
     echo ""
     echo "--- Test 10d: fix-tests proposes fixes for failures ---"
-    if [ -f "./scripts/dist/fix-tests" ]; then
+    if [ -f "./scripts/dist/fix-tests.js" ]; then
         # Create failing results file
         cat > "$TEST_OUTPUT_DIR/failing-results.json" << 'EOF'
 {
@@ -371,7 +371,7 @@ EOF
   ]
 }
 EOF
-        OUTPUT=$(./scripts/dist/fix-tests "$TEST_OUTPUT_DIR/failing-results.json" --dry-run 2>&1 || true)
+        OUTPUT=$(node ./scripts/dist/fix-tests.js "$TEST_OUTPUT_DIR/failing-results.json" --dry-run 2>&1 || true)
         if echo "$OUTPUT" | grep -qiE "failure|element_not_found|confidence"; then
             pass "fix-tests proposes fixes for failures"
         else
@@ -562,12 +562,12 @@ Just say VALID or INVALID and briefly why.")
             EXTRACTED_JSON=$(echo "$SPEC" | grep -oP '\{[^{}]*"tests"[^{}]*\[.*\].*\}' | head -1 || echo "$SPEC")
         fi
         
-        if [ -n "$EXTRACTED_JSON" ] && echo "$EXTRACTED_JSON" | ./scripts/dist/validate-test --stdin > /dev/null 2>&1; then
+        if [ -n "$EXTRACTED_JSON" ] && echo "$EXTRACTED_JSON" | node ./scripts/dist/validate-test.js --stdin > /dev/null 2>&1; then
             pass "Generated spec passes validation"
         else
             # Try a more permissive extraction using sed
             EXTRACTED_JSON=$(echo "$SPEC" | jq -r '.result // empty' 2>/dev/null | sed 's/^```json//; s/^```//; s/```$//' | tr '\n' ' ')
-            if [ -n "$EXTRACTED_JSON" ] && echo "$EXTRACTED_JSON" | ./scripts/dist/validate-test --stdin > /dev/null 2>&1; then
+            if [ -n "$EXTRACTED_JSON" ] && echo "$EXTRACTED_JSON" | node ./scripts/dist/validate-test.js --stdin > /dev/null 2>&1; then
                 pass "Generated spec passes validation (after extraction)"
             else
                 fail "Generated spec did not pass validation" "$(echo "$SPEC" | head -c 300)"

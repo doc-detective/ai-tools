@@ -51,13 +51,13 @@ Inject test steps from Doc Detective specs into documentation source files as in
 
 ```bash
 # Preview mode (default) - shows diff of planned changes
-./scripts/dist/inline-test-injection <spec-file> <source-file>
+node ./scripts/dist/inline-test-injection.js <spec-file> <source-file>
 
 # Apply mode - writes changes to file
-./scripts/dist/inline-test-injection <spec-file> <source-file> --apply
+node ./scripts/dist/inline-test-injection.js <spec-file> <source-file> --apply
 
 # Specify syntax format for inline content
-./scripts/dist/inline-test-injection spec.yaml doc.md --syntax yaml
+node ./scripts/dist/inline-test-injection.js spec.yaml doc.md --syntax yaml
 ```
 
 ### Manual Injection

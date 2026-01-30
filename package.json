@@ -6,9 +6,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "build:doc-testing": "cd skills/doc-testing/scripts && ./build-skill.sh",
+    "build:doc-testing": "cd skills/doc-testing/scripts/src && npm run build",
     "test:doc-testing": "cd skills/doc-testing/scripts && ./test-skill.sh",
-    "build:inline": "cd skills/inline-test-injection/scripts && ./build-skill.sh",
+    "build:inline": "cd skills/inline-test-injection/scripts/src && npm run build",
     "test:inline": "cd skills/inline-test-injection/scripts && ./test-skill.sh"
   },
   "devDependencies": {}

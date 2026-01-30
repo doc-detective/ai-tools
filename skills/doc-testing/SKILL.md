@@ -62,7 +62,7 @@ Test documentation procedures by converting them to Doc Detective test specifica
 echo '<your-spec-json>' > /tmp/spec.json
 
 # Run validator - MUST show "Validation PASSED"
-./scripts/dist/validate-test /tmp/spec.json
+node ./scripts/dist/validate-test.js /tmp/spec.json
 ```
 
 **Do NOT return a spec without running validation. If validation fails, fix the spec and re-validate.**
@@ -84,7 +84,7 @@ echo '<your-spec-json>' > /tmp/spec.json
 **Efficiency tip:** For full workflows, chain commands. Example:
 ```bash
 # Generate, validate, and execute in sequence
-echo '{"tests":[...]}' > spec.json && ./scripts/dist/validate-test spec.json && npx doc-detective run --input spec.json
+echo '{"tests":[...]}' > spec.json && node ./scripts/dist/validate-test.js spec.json && npx doc-detective run --input spec.json
 ```
 
 ## Step 1: Text-to-Test Interpretation
@@ -182,7 +182,7 @@ Use selectors only when:
 
 2. Run the validator and show output:
    ```bash
-   ./scripts/dist/validate-test /tmp/test-spec.json
+   node ./scripts/dist/validate-test.js /tmp/test-spec.json
    ```
 
 3. Only if output shows `Validation PASSED`, proceed to return the spec.
@@ -301,7 +301,7 @@ If user accepts injection:
 
 2. **Show preview first** (default mode - no `--apply` flag):
    ```bash
-   ./skills/inline-test-injection/scripts/dist/inline-test-injection /tmp/doc-detective-spec-<timestamp>.json <source-file-path>
+   node ./skills/inline-test-injection/scripts/dist/inline-test-injection.js /tmp/doc-detective-spec-<timestamp>.json <source-file-path>
    ```
    This displays a diff of planned changes without modifying the file.
 
@@ -312,7 +312,7 @@ If user accepts injection:
 
 4. **Apply changes** on confirmation:
    ```bash
-   ./skills/inline-test-injection/scripts/dist/inline-test-injection /tmp/doc-detective-spec-<timestamp>.json <source-file-path> --apply
+   node ./skills/inline-test-injection/scripts/dist/inline-test-injection.js /tmp/doc-detective-spec-<timestamp>.json <source-file-path> --apply
    ```
 
 5. **Clean up** temp file after successful apply. Retain on error for debugging.
@@ -459,13 +459,13 @@ Use the fix-tests tool to analyze failures and propose fixes:
 
 ```bash
 # Analyze failures and show proposed fixes (dry-run)
-./scripts/dist/fix-tests results.json --spec test-spec.json --dry-run
+node ./scripts/dist/fix-tests.js results.json --spec test-spec.json --dry-run
 
 # Apply fixes above 80% confidence threshold
-./scripts/dist/fix-tests results.json --spec test-spec.json --threshold 80
+node ./scripts/dist/fix-tests.js results.json --spec test-spec.json --threshold 80
 
 # Apply all fixes regardless of confidence
-./scripts/dist/fix-tests results.json --spec test-spec.json --auto-fix
+node ./scripts/dist/fix-tests.js results.json --spec test-spec.json --auto-fix
 ```
 
 ### Fix Loop Workflow
@@ -638,7 +638,7 @@ When `--fix` is enabled in the test command:
 1. [ ] **NO "action" property** - Check every step: if you see `"action":` anywhere, DELETE IT and rewrite. Use `"goTo":`, `"click":`, `"find":` etc. as the key itself.
 2. [ ] **Text-based matching** - Use `"click": "Submit"` not `"click": "#btn"`
 3. [ ] **Valid structure** - `tests` array with `testId` and `steps` in each test
-4. [ ] **EXECUTE VALIDATION** - Run `./scripts/dist/validate-test` on the spec file and include the output in your response
+4. [ ] **EXECUTE VALIDATION** - Run `node ./scripts/dist/validate-test.js` on the spec file and include the output in your response
 5. [ ] **Validation PASSED** - Output must show "Validation PASSED". If not, fix and re-run.
 
 **STOP: Did you run the validator and show its output? If not, do it now before responding.**
