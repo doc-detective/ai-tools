@@ -1,4 +1,3 @@
-````markdown
 # Documentation Detection Patterns
 
 Reference for identifying documentation files and their formats. Use with `doc-detective-resolver` for canonical detection or fall back to pattern matching.
@@ -192,5 +191,3 @@ Example generated config segment:
 - Doc Detective resolver: https://github.com/doc-detective/doc-detective-resolver
 - File type configuration: https://doc-detective.com/docs/references/schemas/config
 - Markup patterns: https://doc-detective.com/docs/get-started/tests#detected-tests
-
-````

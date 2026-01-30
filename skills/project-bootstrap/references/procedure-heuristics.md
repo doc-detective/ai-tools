@@ -1,4 +1,3 @@
-````markdown
 # Procedure Identification Heuristics
 
 Guidelines and prompts for identifying testable procedures in documentation. Use these patterns to analyze docs and determine what can be converted to Doc Detective tests.
@@ -241,5 +240,3 @@ When docs describe submitting forms:
 - Doc Detective actions: ../../../doc-testing/references/actions.md
 - Test structure: https://doc-detective.com/docs/get-started/tests
 - Detected tests: https://doc-detective.com/docs/get-started/tests#detected-tests
-
-````

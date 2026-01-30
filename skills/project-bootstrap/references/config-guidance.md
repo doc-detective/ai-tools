@@ -1,4 +1,3 @@
-````markdown
 # Configuration Guidance
 
 Best practices for generating minimal, effective Doc Detective configurations. Follow the principle: **smallest reasonable config based on the project**.
@@ -290,5 +289,3 @@ npx ajv validate -s https://raw.githubusercontent.com/doc-detective/common/refs/
 - File types: https://doc-detective.com/docs/get-started/tests#detected-tests
 - Contexts: https://doc-detective.com/docs/get-started/config/contexts
 - doc-detective-common: https://github.com/doc-detective/doc-detective-common
-
-````
