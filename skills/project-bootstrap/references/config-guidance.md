@@ -19,17 +19,18 @@ This uses all defaults:
 - `input`: `.` (current directory)
 - `output`: `.` (current directory)
 - `recursive`: `true`
-- `detectSteps`: `true`
+- `detectSteps`: `false`
 - `fileTypes`: `["markdown", "asciidoc", "html", "dita"]`
 
 ### Standard Minimal Config
 
-For most projects, specify only `input` and `output`:
+For most projects, specify only `input`, `output`, and `detectSteps`:
 
 ```json
 {
   "input": "docs",
-  "output": ".doc-detective/results"
+  "output": ".doc-detective/results",
+  "detectSteps": false
 }
 ```
 
@@ -46,6 +47,7 @@ Only add fields when:
 | Using environment variables | `loadVariables` |
 | Running in CI | `runOn` for context |
 | Need relative URL resolution | `origin` |
+| Want to detect testable procedures from markup syntax | `detectSteps` |
 
 ## Configuration Schema Reference
 
@@ -58,7 +60,7 @@ interface Config {
   recursive?: boolean;            // Default: true
   loadVariables?: string;         // Path to .env file
   origin?: string;                // Base URL for relative links
-  detectSteps?: boolean;          // Default: true
+  detectSteps?: boolean;          // Default: false
   allowUnsafeSteps?: boolean;     // Default: false
   fileTypes?: FileType[];         // Default: ["markdown","asciidoc","html","dita"]
   runOn?: Context[];              // Execution contexts
@@ -74,7 +76,8 @@ interface Config {
 ```json
 {
   "input": "docs",
-  "output": ".doc-detective/results"
+  "output": ".doc-detective/results",
+  "detectSteps": false
 }
 ```
 
@@ -84,6 +87,7 @@ interface Config {
 {
   "input": ["pages", "app"],
   "output": ".doc-detective/results",
+  "detectSteps": false,
   "fileTypes": ["markdown"]
 }
 ```
@@ -96,7 +100,8 @@ interface Config {
     "packages/*/docs",
     "docs"
   ],
-  "output": ".doc-detective/results"
+  "output": ".doc-detective/results",
+  "detectSteps": false
 }
 ```
 
@@ -106,6 +111,7 @@ interface Config {
 {
   "input": "docs",
   "output": ".doc-detective/results",
+  "detectSteps": false,
   "loadVariables": ".env.test"
 }
 ```
@@ -116,6 +122,7 @@ interface Config {
 {
   "input": "docs",
   "output": ".doc-detective/results",
+  "detectSteps": false,
   "origin": "https://api.example.com"
 }
 ```
@@ -126,6 +133,7 @@ interface Config {
 {
   "input": "content",
   "output": ".doc-detective/results",
+  "detectSteps": false,
   "fileTypes": ["dita"],
   "processDitaMaps": true
 }
@@ -251,7 +259,12 @@ When merging with existing config:
 ✅ Good:
 ```json
 {
-  "loadVariables": ".env"
+  "loadVariables": ".env",
+  "integrations": {
+    "docDetectiveApi": {
+      "apiKey": "$DOC_DETECTIVE_API_KEY"
+    }
+  }
 }
 ```
 Then in `.env` (gitignored):
@@ -265,7 +278,7 @@ After generating config, verify it:
 
 ```bash
 # Test config loads correctly
-doc-detective --config .doc-detective.json --dry-run
+npx doc-detective --config .doc-detective.json --dry-run
 
 # Or validate with JSON Schema
 npx ajv validate -s https://raw.githubusercontent.com/doc-detective/common/refs/heads/main/dist/schemas/config_v3.schema.json -d .doc-detective.json

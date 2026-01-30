@@ -128,7 +128,8 @@ Generate minimal `.doc-detective.json` following "smallest reasonable config" pr
 ```json
 {
   "input": "docs",
-  "output": ".doc-detective/results"
+  "output": ".doc-detective/results",
+  "detectSteps": false
 }
 ```
 
