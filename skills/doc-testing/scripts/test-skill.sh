@@ -289,6 +289,97 @@ EOF
     else
         fail "All known actions should be accepted"
     fi
+
+    # =============================================================================
+    # FIX-TESTS TOOL VALIDATION
+    # =============================================================================
+    echo ""
+    echo "--- Fix-Tests Tool Tests ---"
+
+    # Test 10a: fix-tests shows usage when no args
+    echo ""
+    echo "--- Test 10a: fix-tests shows usage with no args ---"
+    if [ -f "./scripts/dist/fix-tests" ]; then
+        OUTPUT=$(./scripts/dist/fix-tests 2>&1 || true)
+        if echo "$OUTPUT" | grep -qiE "Usage:|fix-tests"; then
+            pass "fix-tests shows usage message"
+        else
+            fail "fix-tests does not show usage message"
+        fi
+    else
+        skip "fix-tests not built (run build-skill.sh first)"
+    fi
+
+    # Test 10b: fix-tests with --help shows options
+    echo ""
+    echo "--- Test 10b: fix-tests --help shows options ---"
+    if [ -f "./scripts/dist/fix-tests" ]; then
+        OUTPUT=$(./scripts/dist/fix-tests --help 2>&1 || true)
+        if echo "$OUTPUT" | grep -qiE "threshold.*spec.*auto-fix|Options:"; then
+            pass "fix-tests --help shows options"
+        else
+            fail "fix-tests --help does not show expected options"
+        fi
+    else
+        skip "fix-tests not built (run build-skill.sh first)"
+    fi
+
+    # Test 10c: fix-tests reports no failures when given passing results
+    echo ""
+    echo "--- Test 10c: fix-tests handles passing results ---"
+    if [ -f "./scripts/dist/fix-tests" ]; then
+        # Create passing results file
+        cat > "$TEST_OUTPUT_DIR/passing-results.json" << 'EOF'
+{
+  "tests": [
+    {
+      "testId": "test-1",
+      "status": "PASS",
+      "steps": [
+        { "stepId": "step-1", "status": "PASS" }
+      ]
+    }
+  ]
+}
+EOF
+        OUTPUT=$(./scripts/dist/fix-tests "$TEST_OUTPUT_DIR/passing-results.json" --dry-run 2>&1 || true)
+        if echo "$OUTPUT" | grep -qiE "No failures found|0.*failure"; then
+            pass "fix-tests correctly reports no failures for passing results"
+        else
+            fail "fix-tests should report no failures for passing results" "$OUTPUT"
+        fi
+    else
+        skip "fix-tests not built (run build-skill.sh first)"
+    fi
+
+    # Test 10d: fix-tests detects failures and proposes fixes
+    echo ""
+    echo "--- Test 10d: fix-tests proposes fixes for failures ---"
+    if [ -f "./scripts/dist/fix-tests" ]; then
+        # Create failing results file
+        cat > "$TEST_OUTPUT_DIR/failing-results.json" << 'EOF'
+{
+  "tests": [
+    {
+      "testId": "test-1",
+      "status": "FAIL",
+      "steps": [
+        { "stepId": "step-1", "status": "PASS" },
+        { "stepId": "step-2", "status": "FAIL", "error": "Element 'Submit' not found", "step": { "click": "Submit" } }
+      ]
+    }
+  ]
+}
+EOF
+        OUTPUT=$(./scripts/dist/fix-tests "$TEST_OUTPUT_DIR/failing-results.json" --dry-run 2>&1 || true)
+        if echo "$OUTPUT" | grep -qiE "failure|element_not_found|confidence"; then
+            pass "fix-tests proposes fixes for failures"
+        else
+            fail "fix-tests should propose fixes for failures" "$OUTPUT"
+        fi
+    else
+        skip "fix-tests not built (run build-skill.sh first)"
+    fi
 fi
 
 # =============================================================================

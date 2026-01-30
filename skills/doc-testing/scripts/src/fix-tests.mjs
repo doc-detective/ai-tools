@@ -4,7 +4,7 @@
  * fix-tests.mjs
  * 
  * Analyzes Doc Detective test failures and proposes fixes with confidence scoring.
- * Part of the project-bootstrap skill for iterative test improvement.
+ * Part of the doc-testing skill for iterative test improvement.
  * 
  * Usage:
  *   node fix-tests.mjs <results-file> [options]

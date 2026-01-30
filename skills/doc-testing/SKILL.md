@@ -453,6 +453,21 @@ Doc Detective outputs `testResults-<timestamp>.json`:
 
 When tests fail, analyze the failures and generate fixes with confidence scores.
 
+### Fix Tool
+
+Use the fix-tests tool to analyze failures and propose fixes:
+
+```bash
+# Analyze failures and show proposed fixes (dry-run)
+./scripts/dist/fix-tests results.json --spec test-spec.json --dry-run
+
+# Apply fixes above 80% confidence threshold
+./scripts/dist/fix-tests results.json --spec test-spec.json --threshold 80
+
+# Apply all fixes regardless of confidence
+./scripts/dist/fix-tests results.json --spec test-spec.json --auto-fix
+```
+
 ### Fix Loop Workflow
 
 ```

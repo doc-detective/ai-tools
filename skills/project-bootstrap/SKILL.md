@@ -244,7 +244,23 @@ Failed Tests:
 
 ## Phase 5: Fix Loop
 
-Iteratively analyze failures and propose fixes with confidence scoring.
+Iteratively analyze failures and propose fixes with confidence scoring using the `doc-testing` skill's fix-tests tool.
+
+### Using the Fix Tool
+
+```bash
+# Analyze failures (dry-run to preview fixes)
+./skills/doc-testing/scripts/dist/fix-tests results.json --spec test-spec.json --dry-run
+
+# Apply fixes above threshold (default 80%)
+./skills/doc-testing/scripts/dist/fix-tests results.json --spec test-spec.json
+
+# Custom threshold
+./skills/doc-testing/scripts/dist/fix-tests results.json --spec test-spec.json --threshold 70
+
+# Auto-fix all regardless of confidence
+./skills/doc-testing/scripts/dist/fix-tests results.json --spec test-spec.json --auto-fix
+```
 
 ### Fix Loop Flow
 
