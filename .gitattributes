@@ -1,2 +1,0 @@
-skills/*/scripts/dist/* filter=lfs diff=lfs merge=lfs -text
-skills/**/dist/runtime/** filter=lfs diff=lfs merge=lfs -text
