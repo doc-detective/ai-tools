@@ -1,4 +1,3 @@
-````markdown
 ---
 description: Initialize Doc Detective in a repository with documentation detection, config generation, test creation, and iterative fix loop
 skill: doc-detective:init
@@ -284,4 +283,3 @@ jobs:
 - Doc Detective docs: https://doc-detective.com
 - Config schema: https://doc-detective.com/docs/references/schemas/config
 - Actions reference: https://doc-detective.com/docs/category/actions
-````
